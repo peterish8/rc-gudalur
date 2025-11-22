@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+  --radius: 0.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+  background: #f8faf9;
+  min-height: 100vh;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Modern Card Styles */
+.modern-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.4s ease;
+}
+
+.modern-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.hero-card {
+  background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(6, 95, 70, 0.4);
+}
+
+.dark-green-section {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  border-radius: 20px;
+}
+
+.grand-title {
+  background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scroll animations with proper pause behavior */
+@keyframes scroll-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-33.33%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-vertical {
+  animation: scroll-vertical linear infinite;
+  animation-fill-mode: forwards;
+}
+
+.animate-scroll-right {
+  animation: scroll-right linear infinite;
+  animation-fill-mode: forwards;
+}
+
+.animate-scroll-left {
+  animation: scroll-left linear infinite;
+  animation-fill-mode: forwards;
+}
+
+/* Paused state maintains current position */
+.animate-scroll-vertical.paused {
+  animation-play-state: paused;
+}
+
+.animate-scroll-right.paused {
+  animation-play-state: paused;
+}
+
+.animate-scroll-left.paused {
+  animation-play-state: paused;
+}
+
+/* Ensure smooth performance */
+.animate-scroll-vertical,
+.animate-scroll-right,
+.animate-scroll-left {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Button Styles */
+.btn-modern {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+}
+
+.btn-modern:hover {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(5, 150, 105, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #059669;
+  border: 3px solid #059669;
+  border-radius: 16px;
+  padding: 13px 29px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+}
+
+.btn-outline:hover {
+  background: #059669;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+}
+
+/* Full width container */
+.full-width {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+
+
+
