@@ -1,6 +1,5 @@
 import Header from "@/components/header"
 import HeroSection from "@/components/hero-section"
-import ThirukuralSection from "@/components/thirukural-section"
 import BoardMembers from "@/components/board-members"
 import EventsSection from "@/components/events-section"
 import GallerySection from "@/components/gallery-section"
@@ -12,7 +11,6 @@ export default function Home() {
     <main className="min-h-screen">
       <Header />
       <HeroSection />
-      <ThirukuralSection />
       <BoardMembers />
       <EventsSection />
       <GallerySection />
