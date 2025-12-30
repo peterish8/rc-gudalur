@@ -8,13 +8,13 @@ import { supabase, type BoardMember } from "@/lib/supabase";
 const BoardMemberCard: React.FC<{ member: BoardMember }> = ({ member }) => {
   return (
     <div
-      className="flex-shrink-0 w-64 sm:w-72 modern-card p-5 sm:p-6 text-center cursor-pointer hover:shadow-xl transition-shadow duration-300
+      className="flex-shrink-0 w-28 sm:w-48 md:w-56 lg:w-72 modern-card p-2 sm:p-4 lg:p-6 text-center cursor-pointer hover:shadow-xl transition-shadow duration-300
                  bg-transparent rounded-lg shadow-md flex flex-col items-center justify-center"
     >
-      <p className="text-emerald-600 font-bold text-base sm:text-lg mb-1">
+      <p className="text-emerald-600 font-bold text-xs sm:text-base lg:text-lg mb-0.5 sm:mb-1">
         {member.designation}
       </p>
-      <h3 className="font-montserrat font-bold text-lg sm:text-xl text-gray-900">
+      <h3 className="font-montserrat font-bold text-sm sm:text-lg lg:text-xl text-gray-900">
         {member.name}
       </h3>
     </div>
@@ -169,11 +169,11 @@ export default function BoardMembers() {
       }}
     >
       <div className="px-4 sm:px-8">
-        <div className="text-center mb-16">
-          <h2 className="grand-title font-montserrat font-black text-6xl mb-6 text-emerald-900">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="grand-title font-montserrat font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 sm:mb-6 text-emerald-900">
             Our Board Members
           </h2>
-          <p className="text-emerald-800 max-w-3xl mx-auto text-xl font-medium">
+          <p className="text-emerald-800 max-w-3xl mx-auto text-base sm:text-lg lg:text-xl font-medium px-4">
             Meet the dedicated leaders who guide our club's mission and
             initiatives
           </p>

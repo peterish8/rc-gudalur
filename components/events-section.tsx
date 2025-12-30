@@ -97,9 +97,9 @@ export default function EventsSection() {
   return (
     <section id="events" className="pt-10 pb-20 bg-white">
       <div className="px-4 sm:px-8">
-        <div className="text-center mb-16">
-          <h2 className="grand-title font-montserrat font-black text-6xl mb-6">Our Events</h2>
-          <p className="text-gray-600 max-w-3xl mx-auto text-xl font-medium">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+          <h2 className="grand-title font-montserrat font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 sm:mb-6">Our Events</h2>
+          <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg lg:text-xl font-medium px-4">
             Join us in our community service initiatives and fellowship activities
           </p>
         </div>
@@ -177,7 +177,7 @@ export default function EventsSection() {
               {duplicatedEvents.map((event, index) => (
                 <div
                   key={`${event.id}-${index}`}
-                  className={`flex-shrink-0 w-80 h-80 modern-card overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-2xl ${
+                  className={`flex-shrink-0 w-64 h-72 sm:w-72 sm:h-76 md:w-80 md:h-80 modern-card overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-2xl ${
                     selectedEvent?.id === event.id ? "ring-4 ring-emerald-500 shadow-2xl" : ""
                   }`}
                   onClick={() => handleEventClick(event)}

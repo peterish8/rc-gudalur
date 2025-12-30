@@ -8,6 +8,7 @@ interface Kural {
   number: number
   line1: string
   line2: string
+  tamilMeaning: string
   translation: string
   chapter: string
 }
@@ -18,6 +19,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 1,
     line1: "அகர முதல எழுத்தெல்லாம் ஆதி",
     line2: "பகவன் முதற்றே உலகு",
+    tamilMeaning: "எழுத்துக்கள் எல்லாம் அகரத்தை அடிப்படையாக கொண்டிருப்பது போல், உலகம் கடவுளை அடிப்படையாக கொண்டிருக்கிறது.",
     translation: "As all letters have 'A' as their origin, so does the world have the eternal God as its origin.",
     chapter: "The Praise of God"
   },
@@ -25,6 +27,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 50,
     line1: "இன்சொலால் ஈரம் அளைஇப் படிறிலவாம்",
     line2: "செம்பொருள் கண்டார்வாய்ச் சொல்",
+    tamilMeaning: "உண்மையான பொருளை உணர்ந்தவர்களின் வாய்ச்சொல் இனிமையானது, அன்பு கலந்தது, வஞ்சனையற்றது.",
     translation: "The words of the wise are gentle, moist with kindness, and free from deceit.",
     chapter: "Sweet Speech"
   },
@@ -32,6 +35,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 391,
     line1: "கற்க கசடறக் கற்பவை கற்றபின்",
     line2: "நிற்க அதற்குத் தக",
+    tamilMeaning: "கற்க வேண்டியவற்றை குற்றமறக் கற்று, கற்றபின் அதன்படி நடக்க வேண்டும்.",
     translation: "Learn thoroughly what should be learnt, and let your conduct be worthy of your learning.",
     chapter: "Learning"
   },
@@ -39,6 +43,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 396,
     line1: "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்குக்",
     line2: "கற்றனைத் தூறும் அறிவு",
+    tamilMeaning: "மணலில் தோண்டத் தோண்ட நீர் சுரப்பது போல், கற்கக் கற்க அறிவு பெருகும்.",
     translation: "Just as water springs forth higher when you dig deeper in sand, so does knowledge increase with learning.",
     chapter: "Learning"
   },
@@ -46,6 +51,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 611,
     line1: "ஆள்வினையும் ஆன்ற அறிவும் என இரண்டின்",
     line2: "நீள்வினையால் நீளும் குடி",
+    tamilMeaning: "முயற்சியும் சிறந்த அறிவும் ஆகிய இரண்டின் தொடர் செயலால் குடும்பம் உயரும்.",
     translation: "A family will flourish that possesses both industry and knowledge.",
     chapter: "Effort"
   },
@@ -53,6 +59,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 662,
     line1: "வினைக்கண் வினைகெடல் ஓம்பல் வினைக்குறை",
     line2: "தீர்ந்தாரின் தீர்ந்தன்று உலகு",
+    tamilMeaning: "செயலின் நடுவில் தோல்வியடையாமல் காக்க வேண்டும்; செயலை விட்டவரை உலகம் கைவிடும்.",
     translation: "Beware of failure in the midst of action; the world abandons those who abandon their work.",
     chapter: "Energy in Action"
   },
@@ -60,6 +67,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 755,
     line1: "படைகுடி கூழ்அமைச்சு நட்பரண் ஆறும்",
     line2: "உடையான் அரசருள் ஏறு",
+    tamilMeaning: "படை, குடி, செல்வம், அமைச்சு, நட்பு, அரண் என்னும் ஆறும் உடையவன் அரசர்களுள் சிங்கம்.",
     translation: "He is the lion among kings who possesses the six essentials: army, subjects, wealth, ministers, allies, and forts.",
     chapter: "The Essentials of a State"
   },
@@ -67,6 +75,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 983,
     line1: "இன்மையின் இன்னாதது யாதெனின் இன்மையின்",
     line2: "இன்மையே இன்னா தது",
+    tamilMeaning: "வறுமையை விடத் துன்பமானது எது என்றால், வறுமையே மிகவும் துன்பமானது.",
     translation: "What is more painful than poverty? Nothing is more painful than poverty itself.",
     chapter: "Poverty"
   },
@@ -74,6 +83,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 1330,
     line1: "ஊடுதல் காமத்திற்கு இன்பம் அதற்கின்பம்",
     line2: "கூடி முயங்கப் பெறின்",
+    tamilMeaning: "ஊடல் கொள்வது காதலுக்கு இன்பம்; அதைவிட இன்பம் கூடி மகிழ்வது.",
     translation: "Feigned anger is the delight of love; and the making-up thereafter is its supreme joy.",
     chapter: "The Pleasures of Temporary Variance"
   },
@@ -81,6 +91,7 @@ const FALLBACK_KURALS: Kural[] = [
     number: 208,
     line1: "தீயவை செய்தார் கெடுதல் நிழல்தன்னை",
     line2: "வீயாது அடிஉறைந் தற்று",
+    tamilMeaning: "தீமை செய்தவர் அழிவது, நிழல் காலடியை விட்டு நீங்காமல் தொடர்வது போன்றது.",
     translation: "Destruction will dwell at the heels of those who commit evil even as their shadow that leaves them not.",
     chapter: "Fear of Doing Evil"
   }
@@ -119,6 +130,7 @@ export default function ContactSection() {
             number: data.number || 1,
             line1: data.kural?.[0] || "",
             line2: data.kural?.[1] || "",
+            tamilMeaning: data.meaning?.ta_mu_va || data.meaning?.ta_salamon || "",
             translation: data.meaning?.en || "",
             chapter: data.chapter || ""
           })
@@ -179,11 +191,11 @@ export default function ContactSection() {
           </p>
         </div>
 
-        {/* Main 50/50 Grid Layout */}
-        <div className="grid lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
+        {/* Main Layout - Reordered on mobile: Form → Socials → Thirukural */}
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
           
-          {/* Left Side - Thirukural */}
-          <div className="flex flex-col">
+          {/* Thirukural - Shows last on mobile (order-3), left on desktop */}
+          <div className="flex flex-col order-3 lg:order-none">
             <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-xl p-4 sm:p-6 lg:p-8 border border-amber-200 shadow-md h-full flex flex-col justify-center">
               {/* Header */}
               <div className="text-center mb-4">
@@ -226,9 +238,25 @@ export default function ContactSection() {
                     <div className="h-px flex-1 max-w-[40px] bg-gradient-to-l from-transparent to-amber-400"></div>
                   </div>
 
+                  {/* Tamil Meaning */}
+                  {kural.tamilMeaning && (
+                    <div className="text-center mb-3">
+                      <p className="text-gray-800 text-xs sm:text-sm leading-relaxed font-medium">
+                        {kural.tamilMeaning}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  <div className="flex items-center justify-center gap-2 my-2">
+                    <div className="h-px flex-1 max-w-[30px] bg-gradient-to-r from-transparent to-amber-300"></div>
+                    <span className="text-amber-400 text-xs">✦</span>
+                    <div className="h-px flex-1 max-w-[30px] bg-gradient-to-l from-transparent to-amber-300"></div>
+                  </div>
+
                   {/* English Translation */}
                   <div className="text-center mb-3">
-                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed italic">
+                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed italic">
                       "{kural.translation}"
                     </p>
                   </div>
@@ -251,8 +279,8 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right Side - Contact Form */}
-          <div className="flex flex-col">
+          {/* Contact Form - Shows first on mobile (order-1), right on desktop */}
+          <div className="flex flex-col order-1 lg:order-none">
             <div className="modern-card p-4 sm:p-6 lg:p-8 h-full flex flex-col justify-center">
               <h3 className="font-montserrat font-bold text-xl sm:text-2xl text-gray-900 mb-1">Contact Us</h3>
               <p className="text-gray-600 text-xs sm:text-sm mb-4">
@@ -336,58 +364,98 @@ export default function ContactSection() {
           </div>
         </div>
 
-        {/* Bottom - Social Links */}
-        <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-12">
-          <a
-            href="https://www.facebook.com/rotarygudalur"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
-          >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.243-1.333 1.501-1.333h2.499v-5h-4c-4.072 0-5 2.417-5 5.333v2.667z" />
-              </svg>
+        {/* Social Links - Shows second on mobile (order-2) */}
+        <div className="order-2 lg:order-none mb-4 lg:mb-0">
+          {/* Mobile: Icons only in a single container with one @handle */}
+          <div className="sm:hidden">
+            <div className="flex items-center justify-center gap-4 p-4 bg-white rounded-2xl shadow-lg border border-gray-100">
+              <a
+                href="https://www.facebook.com/rotarygudalur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              >
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.243-1.333 1.501-1.333h2.499v-5h-4c-4.072 0-5 2.417-5 5.333v2.667z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.youtube.com/@rotarygudalur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              >
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/rotary_club_gdr_garden_city?utm_source=qr&igsh=MWpidHd3bXBmMWJkNQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              >
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
             </div>
-            <div>
-              <h4 className="font-bold text-gray-900 text-base sm:text-lg">Facebook</h4>
-              <p className="text-gray-500 text-sm">@rotarygudalur</p>
-            </div>
-          </a>
+            <p className="text-center text-gray-500 text-sm font-medium mt-2">@rotarygudalur</p>
+          </div>
 
-          <a
-            href="https://www.youtube.com/@rotarygudalur"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
-          >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 text-base sm:text-lg">YouTube</h4>
-              <p className="text-gray-500 text-sm">@rotarygudalur</p>
-            </div>
-          </a>
+          {/* Desktop/Tablet: Full social links with names */}
+          <div className="hidden sm:flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-12">
+            <a
+              href="https://www.facebook.com/rotarygudalur"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
+            >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.243-1.333 1.501-1.333h2.499v-5h-4c-4.072 0-5 2.417-5 5.333v2.667z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 text-base sm:text-lg">Facebook</h4>
+                <p className="text-gray-500 text-sm">@rotarygudalur</p>
+              </div>
+            </a>
 
-          <a
-            href="https://www.instagram.com/rotary_club_gdr_garden_city?utm_source=qr&igsh=MWpidHd3bXBmMWJkNQ=="
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
-          >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 text-base sm:text-lg">Instagram</h4>
-              <p className="text-gray-500 text-sm">@rotarygudalur</p>
-            </div>
-          </a>
+            <a
+              href="https://www.youtube.com/@rotarygudalur"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
+            >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 text-base sm:text-lg">YouTube</h4>
+                <p className="text-gray-500 text-sm">@rotarygudalur</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.instagram.com/rotary_club_gdr_garden_city?utm_source=qr&igsh=MWpidHd3bXBmMWJkNQ=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
+            >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 text-base sm:text-lg">Instagram</h4>
+                <p className="text-gray-500 text-sm">@rotarygudalur</p>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </section>

@@ -92,8 +92,8 @@ export default function HeroSection() {
           {/* Main Hero Card - Takes 3 columns */}
           <div className="lg:col-span-3">
             <div className="grid gap-8 lg:gap-12">
-              {/* Hero Card - Enhanced mobile height and padding */}
-              <div className="hero-card h-[650px] sm:h-[500px] relative overflow-hidden shadow-2xl">
+              {/* Hero Card - Smaller on mobile, normal on tablet/desktop */}
+              <div className="hero-card h-[300px] sm:h-[500px] relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0">
                   <Image
                     src="/community-service-volunteers.png"
@@ -102,8 +102,8 @@ export default function HeroSection() {
                     className="object-cover opacity-25"
                   />
                 </div>
-                <div className="relative z-10 p-8 sm:p-8 lg:p-16 h-full flex flex-col justify-center">
-                  <h1 className="font-montserrat font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-white mb-4 sm:mb-6 leading-tight">
+                <div className="relative z-10 p-2 sm:p-8 lg:p-16 h-full flex flex-col justify-center">
+                  <h1 className="font-montserrat font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-white mb-2 sm:mb-6 leading-tight">
                     Welcome to the
                     <br />
                     <span className="text-emerald-200">Rotary Club of</span>
@@ -112,7 +112,7 @@ export default function HeroSection() {
                       Gudalur Garden City
                     </span>
                   </h1>
-                  <p className="text-lg sm:text-xl lg:text-2xl text-white/95 mb-8 sm:mb-10 max-w-3xl font-medium">
+                  <p className="text-base sm:text-xl lg:text-2xl text-white/95 mb-4 sm:mb-10 max-w-3xl font-medium">
                     Uniting leaders, building friendships, and creating lasting
                     change in our community.
                   </p>
@@ -121,13 +121,13 @@ export default function HeroSection() {
 
               {/* About Section Card */}
               <div className="modern-card p-6 sm:p-8 lg:p-12">
-                <h2 className="grand-title font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
+                <h2 className="grand-title font-montserrat font-black text-xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
                   About Our Club
                 </h2>
 
                 {/* Full text at the top */}
                 <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
-                  <p className="text-gray-700 leading-relaxed text-lg sm:text-xl font-bold">
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
                     Rotary Club of Gudalur Garden City charted on "01-July-2017"
                     with the set of service minded people to serve this
                     community with the long-lasting change. Our few avenues of
@@ -138,7 +138,7 @@ export default function HeroSection() {
                     Above Self" and connect the dots to make a big impact to the
                     needy people.
                   </p>
-                  <p className="text-gray-700 leading-relaxed text-lg sm:text-xl font-bold">
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
                     Our club periodically conducts the camp for Blood donation,
                     End-Polio, Disease prevention and other service projects in
                     this vicinity. Kindly watch out event section for upcoming
@@ -147,32 +147,32 @@ export default function HeroSection() {
                   </p>
                   <button
                     onClick={() => window.open("https://rotary.org", "_blank")}
-                    className="text-emerald-600 hover:text-emerald-700 font-bold text-base sm:text-lg transition-colors duration-300"
+                    className="text-emerald-600 hover:text-emerald-700 font-bold text-sm sm:text-lg transition-colors duration-300"
                   >
                     Learn More About Rotary →
                   </button>
                 </div>
 
-                {/* Two info boxes at the bottom */}
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+                {/* Two info boxes - Side by side on all screens */}
+                <div className="flex flex-row gap-3 sm:gap-6 justify-center">
                   {/* Active Members - Clickable */}
                   <div
                     onClick={() => scrollToSection("board")}
-                    className="bg-gradient-to-br from-teal-50 to-teal-100 p-6 sm:p-8 rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 min-w-[200px]"
+                    className="bg-gradient-to-br from-teal-50 to-teal-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]"
                   >
-                    <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">👥</div>
-                    <h3 className="font-black text-2xl sm:text-3xl text-teal-600 mb-1 sm:mb-2">
+                    <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">👥</div>
+                    <h3 className="font-black text-xl sm:text-3xl text-teal-600 mb-0.5 sm:mb-2">
                       25+
                     </h3>
-                    <p className="text-gray-700 font-semibold text-sm sm:text-base">
+                    <p className="text-gray-700 font-semibold text-xs sm:text-base">
                       Active Members
                     </p>
                   </div>
 
                   {/* Years of Service - Dynamic */}
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 sm:p-8 rounded-2xl border-2 border-green-200 text-center min-w-[200px]">
-                    <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">⭐</div>
-                    <h3 className="font-black text-2xl sm:text-3xl text-green-600 mb-1 sm:mb-2">
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-green-200 text-center flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]">
+                    <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">⭐</div>
+                    <h3 className="font-black text-xl sm:text-3xl text-green-600 mb-0.5 sm:mb-2">
                       {(() => {
                         const startDate = new Date(2017, 6, 1); // July 1, 2017
                         const today = new Date();
@@ -186,7 +186,7 @@ export default function HeroSection() {
                       })()}
                       +
                     </h3>
-                    <p className="text-gray-700 font-semibold text-sm sm:text-base">
+                    <p className="text-gray-700 font-semibold text-xs sm:text-base">
                       Years of Service
                     </p>
                   </div>
@@ -206,17 +206,37 @@ export default function HeroSection() {
                   </h3>
                 </div>
 
-                {/* Auto-scrolling Content - Mobile optimized height */}
+                {/* Upcoming Events - On mobile: touch scrolls page, only scrollbar scrolls events */}
                 <div
                   ref={scrollContainerRef}
-                  className="h-[400px] sm:h-[600px] lg:h-[800px] overflow-y-auto scrollbar-hide cursor-pointer"
+                  className="h-[400px] sm:h-[600px] lg:h-[800px] overflow-y-scroll scrollbar-mobile-show cursor-default sm:cursor-pointer"
+                  style={{ touchAction: 'none' }}
                   onMouseEnter={handleNotificationMouseEnter}
                   onMouseLeave={handleNotificationMouseLeave}
+                  onTouchStart={(e) => {
+                    // On mobile: store the starting Y position for manual page scroll
+                    if (window.innerWidth < 640) {
+                      const touch = e.touches[0];
+                      (e.currentTarget as HTMLElement).dataset.touchStartY = touch.clientY.toString();
+                    }
+                  }}
+                  onTouchMove={(e) => {
+                    // On mobile: scroll the page instead of the container
+                    if (window.innerWidth < 640) {
+                      const startY = parseFloat((e.currentTarget as HTMLElement).dataset.touchStartY || '0');
+                      const touch = e.touches[0];
+                      const deltaY = startY - touch.clientY;
+                      window.scrollBy(0, deltaY);
+                      (e.currentTarget as HTMLElement).dataset.touchStartY = touch.clientY.toString();
+                    }
+                  }}
                   onWheel={(e) => {
-                    if (isPaused && scrollContainerRef.current) {
+                    // On desktop: allow wheel scroll within the panel
+                    if (isPaused && scrollContainerRef.current && window.innerWidth >= 640) {
                       e.preventDefault();
                       scrollContainerRef.current.scrollTop += e.deltaY;
                     }
+                    // On mobile: let wheel event bubble up to scroll page
                   }}
                 >
                   <div

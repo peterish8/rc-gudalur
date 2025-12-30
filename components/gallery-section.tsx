@@ -127,9 +127,9 @@ export default function GallerySection() {
   return (
     <section id="gallery" className="py-20 bg-gray-50">
       <div className="px-4 sm:px-8">
-        <div className="text-center mb-16">
-          <h2 className="grand-title font-montserrat font-black text-6xl mb-6">Gallery</h2>
-          <p className="text-gray-600 max-w-3xl mx-auto text-xl font-medium">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+          <h2 className="grand-title font-montserrat font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 sm:mb-6">Gallery</h2>
+          <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg lg:text-xl font-medium px-4">
             Moments from our service projects and community activities
           </p>
         </div>
@@ -166,7 +166,7 @@ export default function GallerySection() {
               {duplicatedImages.map((image, index) => (
                 <div
                   key={`gallery-${image.id}-${index}`}
-                  className="flex-shrink-0 w-80 modern-card overflow-hidden cursor-pointer group hover:shadow-2xl transition-shadow duration-300"
+                  className="flex-shrink-0 w-64 sm:w-72 md:w-80 modern-card overflow-hidden cursor-pointer group hover:shadow-2xl transition-shadow duration-300"
                   onClick={() => {
                     if (!topRowDragging) {
                       setSelectedImage(image)
@@ -202,7 +202,7 @@ export default function GallerySection() {
         {/* Lightbox Modal with Title and Description */}
         {selectedImage && (
           <div
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-8"
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8"
             onClick={() => setSelectedImage(null)}
           >
             <div className="modern-card max-w-5xl max-h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
