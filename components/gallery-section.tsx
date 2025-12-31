@@ -69,19 +69,21 @@ export default function GallerySection() {
     setTopRowPaused(true)
     setTopRowDragging(true)
     topHasMovedRef.current = false // Reset movement tracking
+    topStartXRef.current = clientX
     if (topRowRef.current) {
       topRowRef.current.style.animationPlayState = "paused"
-      topStartXRef.current = clientX - topRowRef.current.offsetLeft
       topScrollLeftRef.current = topRowRef.current.scrollLeft
     }
   }
 
   const handleTopRowDragMove = (clientX: number) => {
     if (!topRowDragging || !topRowRef.current) return
-    topHasMovedRef.current = true // Actual movement detected
-    const x = clientX - topRowRef.current.offsetLeft
-    const walk = (x - topStartXRef.current) * 2
-    topRowRef.current.scrollLeft = topScrollLeftRef.current - walk
+    const deltaX = Math.abs(clientX - topStartXRef.current)
+    if (deltaX > 5) {
+      topHasMovedRef.current = true
+      const walk = (clientX - topStartXRef.current) * 2
+      topRowRef.current.scrollLeft = topScrollLeftRef.current - walk
+    }
   }
 
   const handleTopRowDragEnd = () => {
@@ -111,19 +113,21 @@ export default function GallerySection() {
     setBottomRowPaused(true)
     setBottomRowDragging(true)
     bottomHasMovedRef.current = false // Reset movement tracking
+    bottomStartXRef.current = clientX
     if (bottomRowRef.current) {
       bottomRowRef.current.style.animationPlayState = "paused"
-      bottomStartXRef.current = clientX - bottomRowRef.current.offsetLeft
       bottomScrollLeftRef.current = bottomRowRef.current.scrollLeft
     }
   }
 
   const handleBottomRowDragMove = (clientX: number) => {
     if (!bottomRowDragging || !bottomRowRef.current) return
-    bottomHasMovedRef.current = true // Actual movement detected
-    const x = clientX - bottomRowRef.current.offsetLeft
-    const walk = (x - bottomStartXRef.current) * 2
-    bottomRowRef.current.scrollLeft = bottomScrollLeftRef.current - walk
+    const deltaX = Math.abs(clientX - bottomStartXRef.current)
+    if (deltaX > 5) {
+      bottomHasMovedRef.current = true
+      const walk = (clientX - bottomStartXRef.current) * 2
+      bottomRowRef.current.scrollLeft = bottomScrollLeftRef.current - walk
+    }
   }
 
   const handleBottomRowDragEnd = () => {
@@ -157,15 +161,15 @@ export default function GallerySection() {
               onMouseMove={(e) => handleTopRowDragMove(e.pageX)}
               onMouseUp={handleTopRowDragEnd}
               onTouchStart={(e) => {
-                e.preventDefault()
                 handleTopRowDragStart(e.touches[0].clientX)
               }}
               onTouchMove={(e) => {
-                e.preventDefault()
+                if (topHasMovedRef.current) {
+                  e.preventDefault()
+                }
                 handleTopRowDragMove(e.touches[0].clientX)
               }}
-              onTouchEnd={(e) => {
-                e.preventDefault()
+              onTouchEnd={() => {
                 handleTopRowDragEnd()
               }}
             >

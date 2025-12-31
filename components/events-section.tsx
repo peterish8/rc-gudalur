@@ -58,20 +58,23 @@ export default function EventsSection() {
     setIsPaused(true)
     setIsDragging(true)
     hasMovedRef.current = false // Reset movement tracking
+    startXRef.current = clientX
     if (scrollRef.current) {
       // Pause animation using animationPlayState
       scrollRef.current.style.animationPlayState = "paused"
-      startXRef.current = clientX - scrollRef.current.offsetLeft
       scrollLeftRef.current = scrollRef.current.scrollLeft
     }
   }
 
   const handleInteractionMove = (clientX: number) => {
     if (!isDragging || !scrollRef.current) return
-    hasMovedRef.current = true // Actual movement detected
-    const x = clientX - scrollRef.current.offsetLeft
-    const walk = (x - startXRef.current) * 2
-    scrollRef.current.scrollLeft = scrollLeftRef.current - walk
+    const deltaX = Math.abs(clientX - startXRef.current)
+    // Only mark as moved if significant movement (>5px)
+    if (deltaX > 5) {
+      hasMovedRef.current = true
+      const walk = (clientX - startXRef.current) * 2
+      scrollRef.current.scrollLeft = scrollLeftRef.current - walk
+    }
   }
 
   const handleInteractionEnd = () => {
@@ -161,15 +164,17 @@ export default function EventsSection() {
               onMouseMove={(e) => handleInteractionMove(e.pageX)}
               onMouseUp={handleInteractionEnd}
               onTouchStart={(e) => {
-                e.preventDefault()
+                // Don't preventDefault here to allow click events
                 handleInteractionStart(e.touches[0].clientX)
               }}
               onTouchMove={(e) => {
-                e.preventDefault()
+                // Only preventDefault if actually dragging to allow taps
+                if (hasMovedRef.current) {
+                  e.preventDefault()
+                }
                 handleInteractionMove(e.touches[0].clientX)
               }}
-              onTouchEnd={(e) => {
-                e.preventDefault()
+              onTouchEnd={() => {
                 handleInteractionEnd()
               }}
               onWheel={(e) => {
