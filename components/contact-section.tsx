@@ -154,6 +154,10 @@ export default function ContactSection() {
     setSubmitStatus("idle")
 
     try {
+      if (!supabase) {
+        throw new Error("Supabase client is not initialized due to missing environment variables.")
+      }
+
       const { error } = await supabase.from("contact_submissions").insert([{
         name: formData.name,
         phone: formData.phone,
