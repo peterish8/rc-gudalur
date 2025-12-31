@@ -12,6 +12,7 @@ export default function EventsSection() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const scrollLeftRef = useRef(0)
+  const hasMovedRef = useRef(false) // Track if actual movement happened (for tap vs drag)
 
   useEffect(() => {
     fetchEvents()
@@ -47,7 +48,8 @@ export default function EventsSection() {
   const duplicatedEvents = [...events, ...events, ...events]
 
   const handleEventClick = (event: Event) => {
-    if (!isDragging) {
+    // Only block click if actual dragging/movement happened
+    if (!hasMovedRef.current) {
       setSelectedEvent(event)
     }
   }
@@ -55,6 +57,7 @@ export default function EventsSection() {
   const handleInteractionStart = (clientX: number) => {
     setIsPaused(true)
     setIsDragging(true)
+    hasMovedRef.current = false // Reset movement tracking
     if (scrollRef.current) {
       // Pause animation using animationPlayState
       scrollRef.current.style.animationPlayState = "paused"
@@ -65,6 +68,7 @@ export default function EventsSection() {
 
   const handleInteractionMove = (clientX: number) => {
     if (!isDragging || !scrollRef.current) return
+    hasMovedRef.current = true // Actual movement detected
     const x = clientX - scrollRef.current.offsetLeft
     const walk = (x - startXRef.current) * 2
     scrollRef.current.scrollLeft = scrollLeftRef.current - walk

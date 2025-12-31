@@ -7,6 +7,7 @@ import { supabase, type Event } from "@/lib/supabase";
 export default function HeroSection() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [yearsOfService, setYearsOfService] = useState<number | null>(null); // Client-side only
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const notificationScrollRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +35,14 @@ export default function HeroSection() {
 
   useEffect(() => {
     fetchEvents();
+
+    // Calculate years of service on client only to avoid hydration mismatch
+    const startDate = new Date(2017, 6, 1); // July 1, 2017
+    const today = new Date();
+    let years = today.getFullYear() - startDate.getFullYear();
+    const isBeforeAnniversary = today.getMonth() < 6 || (today.getMonth() === 6 && today.getDate() < 1);
+    if (isBeforeAnniversary) years--;
+    setYearsOfService(years);
   }, []);
 
   const fetchEvents = async () => {
@@ -88,12 +97,12 @@ export default function HeroSection() {
   return (
     <section id="home" ref={sectionRef} className="pb-16 bg-gray-50">
       <div className="px-4 sm:px-8">
-        <div className="grid lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Main Hero Card - Takes 3 columns */}
-          <div className="lg:col-span-3">
-            <div className="grid gap-8 lg:gap-12">
-              {/* Hero Card - Smaller on mobile, normal on tablet/desktop */}
-              <div className="hero-card h-[300px] sm:h-[500px] relative overflow-hidden shadow-2xl">
+        <div className="grid md:grid-cols-5 lg:grid-cols-4 gap-6 md:gap-6 lg:gap-12">
+          {/* Main Hero Card - Takes 3 of 5 columns on tablet, 3 of 4 on desktop */}
+          <div className="md:col-span-3 lg:col-span-3">
+            <div className="grid gap-6 md:gap-8 lg:gap-12">
+              {/* Hero Card - Smaller on mobile/tablet, normal on desktop */}
+              <div className="hero-card h-[300px] md:h-[350px] lg:h-[500px] relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0">
                   <Image
                     src="/community-service-volunteers.png"
@@ -102,8 +111,8 @@ export default function HeroSection() {
                     className="object-cover opacity-25"
                   />
                 </div>
-                <div className="relative z-10 p-2 sm:p-8 lg:p-16 h-full flex flex-col justify-center">
-                  <h1 className="font-montserrat font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-white mb-2 sm:mb-6 leading-tight">
+                <div className="relative z-10 p-2 sm:p-6 md:p-8 lg:p-16 h-full flex flex-col justify-center">
+                  <h1 className="font-montserrat font-black text-3xl sm:text-4xl md:text-4xl lg:text-7xl text-white mb-2 sm:mb-4 md:mb-6 leading-tight">
                     Welcome to the
                     <br />
                     <span className="text-emerald-200">Rotary Club of</span>
@@ -112,7 +121,7 @@ export default function HeroSection() {
                       Gudalur Garden City
                     </span>
                   </h1>
-                  <p className="text-base sm:text-xl lg:text-2xl text-white/95 mb-4 sm:mb-10 max-w-3xl font-medium">
+                  <p className="text-base sm:text-lg md:text-lg lg:text-2xl text-white/95 mb-4 sm:mb-8 md:mb-10 max-w-3xl font-medium">
                     Uniting leaders, building friendships, and creating lasting
                     change in our community.
                   </p>
@@ -173,18 +182,7 @@ export default function HeroSection() {
                   <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-green-200 text-center flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]">
                     <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">⭐</div>
                     <h3 className="font-black text-xl sm:text-3xl text-green-600 mb-0.5 sm:mb-2">
-                      {(() => {
-                        const startDate = new Date(2017, 6, 1); // July 1, 2017
-                        const today = new Date();
-                        let years =
-                          today.getFullYear() - startDate.getFullYear();
-                        const isBeforeAnniversary =
-                          today.getMonth() < 6 ||
-                          (today.getMonth() === 6 && today.getDate() < 1);
-                        if (isBeforeAnniversary) years--;
-                        return years;
-                      })()}
-                      +
+                      {yearsOfService !== null ? yearsOfService : '8'}+
                     </h3>
                     <p className="text-gray-700 font-semibold text-xs sm:text-base">
                       Years of Service
@@ -195,8 +193,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Notifications Panel - Mobile optimized */}
-          <div className="lg:col-span-1">
+          {/* Notifications Panel - Takes 2 of 5 columns on tablet (wider) */}
+          <div className="md:col-span-2 lg:col-span-1">
             <div className="sticky top-24">
               <div className="modern-card overflow-hidden h-full">
                 {/* Header */}
@@ -206,28 +204,38 @@ export default function HeroSection() {
                   </h3>
                 </div>
 
-                {/* Upcoming Events - On mobile: touch scrolls page, only scrollbar scrolls events */}
+                {/* Upcoming Events - On mobile: taps work, swipes scroll page */}
                 <div
                   ref={scrollContainerRef}
-                  className="h-[400px] sm:h-[600px] lg:h-[800px] overflow-y-scroll scrollbar-mobile-show cursor-default sm:cursor-pointer"
-                  style={{ touchAction: 'none' }}
+                  className="h-[400px] sm:h-[600px] lg:h-[800px] overflow-y-scroll scrollbar-mobile-show cursor-pointer"
                   onMouseEnter={handleNotificationMouseEnter}
                   onMouseLeave={handleNotificationMouseLeave}
                   onTouchStart={(e) => {
-                    // On mobile: store the starting Y position for manual page scroll
+                    // Store starting position for swipe detection
                     if (window.innerWidth < 640) {
                       const touch = e.touches[0];
-                      (e.currentTarget as HTMLElement).dataset.touchStartY = touch.clientY.toString();
+                      const target = e.currentTarget as HTMLElement;
+                      target.dataset.touchStartY = touch.clientY.toString();
+                      target.dataset.touchStartX = touch.clientX.toString();
+                      target.dataset.isSwiping = 'false';
                     }
                   }}
                   onTouchMove={(e) => {
-                    // On mobile: scroll the page instead of the container
+                    // On mobile: if swiping vertically, scroll the page
                     if (window.innerWidth < 640) {
-                      const startY = parseFloat((e.currentTarget as HTMLElement).dataset.touchStartY || '0');
+                      const target = e.currentTarget as HTMLElement;
+                      const startY = parseFloat(target.dataset.touchStartY || '0');
                       const touch = e.touches[0];
-                      const deltaY = startY - touch.clientY;
-                      window.scrollBy(0, deltaY);
-                      (e.currentTarget as HTMLElement).dataset.touchStartY = touch.clientY.toString();
+                      const deltaY = Math.abs(startY - touch.clientY);
+                      
+                      // Only hijack scroll if moving more than 10px (swipe, not tap)
+                      if (deltaY > 10) {
+                        target.dataset.isSwiping = 'true';
+                        e.preventDefault();
+                        const scrollDelta = startY - touch.clientY;
+                        window.scrollBy(0, scrollDelta);
+                        target.dataset.touchStartY = touch.clientY.toString();
+                      }
                     }
                   }}
                   onWheel={(e) => {
@@ -236,7 +244,6 @@ export default function HeroSection() {
                       e.preventDefault();
                       scrollContainerRef.current.scrollTop += e.deltaY;
                     }
-                    // On mobile: let wheel event bubble up to scroll page
                   }}
                 >
                   <div

@@ -17,6 +17,8 @@ export default function GallerySection() {
   const bottomStartXRef = useRef(0)
   const topScrollLeftRef = useRef(0)
   const bottomScrollLeftRef = useRef(0)
+  const topHasMovedRef = useRef(false) // Track actual movement for top row
+  const bottomHasMovedRef = useRef(false) // Track actual movement for bottom row
 
   useEffect(() => {
     fetchGalleryImages()
@@ -66,6 +68,7 @@ export default function GallerySection() {
   const handleTopRowDragStart = (clientX: number) => {
     setTopRowPaused(true)
     setTopRowDragging(true)
+    topHasMovedRef.current = false // Reset movement tracking
     if (topRowRef.current) {
       topRowRef.current.style.animationPlayState = "paused"
       topStartXRef.current = clientX - topRowRef.current.offsetLeft
@@ -75,6 +78,7 @@ export default function GallerySection() {
 
   const handleTopRowDragMove = (clientX: number) => {
     if (!topRowDragging || !topRowRef.current) return
+    topHasMovedRef.current = true // Actual movement detected
     const x = clientX - topRowRef.current.offsetLeft
     const walk = (x - topStartXRef.current) * 2
     topRowRef.current.scrollLeft = topScrollLeftRef.current - walk
@@ -106,6 +110,7 @@ export default function GallerySection() {
   const handleBottomRowDragStart = (clientX: number) => {
     setBottomRowPaused(true)
     setBottomRowDragging(true)
+    bottomHasMovedRef.current = false // Reset movement tracking
     if (bottomRowRef.current) {
       bottomRowRef.current.style.animationPlayState = "paused"
       bottomStartXRef.current = clientX - bottomRowRef.current.offsetLeft
@@ -115,6 +120,7 @@ export default function GallerySection() {
 
   const handleBottomRowDragMove = (clientX: number) => {
     if (!bottomRowDragging || !bottomRowRef.current) return
+    bottomHasMovedRef.current = true // Actual movement detected
     const x = clientX - bottomRowRef.current.offsetLeft
     const walk = (x - bottomStartXRef.current) * 2
     bottomRowRef.current.scrollLeft = bottomScrollLeftRef.current - walk
@@ -168,7 +174,8 @@ export default function GallerySection() {
                   key={`gallery-${image.id}-${index}`}
                   className="flex-shrink-0 w-64 sm:w-72 md:w-80 modern-card overflow-hidden cursor-pointer group hover:shadow-2xl transition-shadow duration-300"
                   onClick={() => {
-                    if (!topRowDragging) {
+                    // Only open lightbox if no actual movement happened
+                    if (!topHasMovedRef.current) {
                       setSelectedImage(image)
                     }
                   }}
