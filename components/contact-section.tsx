@@ -222,7 +222,7 @@ export default function ContactSection() {
           <div className="sm:hidden">
             <div className="flex items-center justify-center gap-4 p-4 bg-white rounded-2xl shadow-lg border border-gray-100">
               <a
-                href="https://www.facebook.com/rotarygudalur"
+                href="https://www.facebook.com/groups/155363388395401/?ref=share&mibextid=lOuIew"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"
@@ -232,7 +232,7 @@ export default function ContactSection() {
                 </svg>
               </a>
               <a
-                href="https://www.youtube.com/@rotarygudalur"
+                href="https://youtube.com/@gudalurgardencity?si=OsjWddQajHsXTrvg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"
@@ -252,13 +252,13 @@ export default function ContactSection() {
                 </svg>
               </a>
             </div>
-            <p className="text-center text-gray-500 text-sm font-medium mt-2">@rotarygudalur</p>
+            {/* <p className="text-center text-gray-500 text-sm font-medium mt-2">@gudalurgardencity</p> matches desktop but hiding for now as per request */}
           </div>
 
           {/* Desktop/Tablet: Full social links with names */}
           <div className="hidden sm:flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-12">
             <a
-              href="https://www.facebook.com/rotarygudalur"
+              href="https://www.facebook.com/groups/155363388395401/?ref=share&mibextid=lOuIew"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
@@ -270,12 +270,11 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 text-base sm:text-lg">Facebook</h4>
-                <p className="text-gray-500 text-sm">@rotarygudalur</p>
               </div>
             </a>
 
             <a
-              href="https://www.youtube.com/@rotarygudalur"
+              href="https://youtube.com/@gudalurgardencity?si=OsjWddQajHsXTrvg"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-4 p-4 sm:p-5 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-100"
@@ -287,7 +286,6 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 text-base sm:text-lg">YouTube</h4>
-                <p className="text-gray-500 text-sm">@rotarygudalur</p>
               </div>
             </a>
 
@@ -304,7 +302,6 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 text-base sm:text-lg">Instagram</h4>
-                <p className="text-gray-500 text-sm">@rotarygudalur</p>
               </div>
             </a>
           </div>

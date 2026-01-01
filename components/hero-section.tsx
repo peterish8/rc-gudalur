@@ -9,7 +9,8 @@ export default function HeroSection() {
   const [isPaused, setIsPaused] = useState(false);
   const [yearsOfService, setYearsOfService] = useState<number | null>(null); // Client-side only
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const notificationScrollRef = useRef<HTMLDivElement>(null);
+  // const notificationScrollRef = useRef<HTMLDivElement>(null); // Commented out unused ref
+  const scrollContentRef = useRef<HTMLDivElement>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -46,10 +47,16 @@ export default function HeroSection() {
   }, []);
 
   const fetchEvents = async () => {
+    if (!supabase) {
+      console.warn("Supabase not initialized");
+      setEvents([]);
+      return;
+    }
     try {
       const { data, error } = await supabase
         .from("events")
         .select("*")
+        .eq("is_upcoming", true) // Only fetch upcoming events
         .order("event_date", { ascending: true })
         .limit(5);
 
@@ -77,20 +84,20 @@ export default function HeroSection() {
     }
   };
 
-  // Create duplicated events for seamless loop
-  const duplicatedEvents = [...events, ...events, ...events];
+  // Events for upcoming section (no duplication for restart animation)
+  const upcomingEventsForDisplay = events;
 
   const handleNotificationMouseEnter = () => {
     setIsPaused(true);
-    if (notificationScrollRef.current) {
-      notificationScrollRef.current.style.animationPlayState = "paused";
+    if (scrollContentRef.current) {
+      scrollContentRef.current.style.animationPlayState = "paused";
     }
   };
 
   const handleNotificationMouseLeave = () => {
     setIsPaused(false);
-    if (notificationScrollRef.current) {
-      notificationScrollRef.current.style.animationPlayState = "running";
+    if (scrollContentRef.current) {
+      scrollContentRef.current.style.animationPlayState = "running";
     }
   };
 
@@ -101,6 +108,7 @@ export default function HeroSection() {
           {/* Main Hero Card - Takes 3 of 5 columns on tablet, 3 of 4 on desktop */}
           <div className="md:col-span-3 lg:col-span-3">
             <div className="grid gap-6 md:gap-8 lg:gap-12">
+              {/* Hero Card - Smaller on mobile/tablet, normal on desktop */}
               {/* Hero Card - Smaller on mobile/tablet, normal on desktop */}
               <div className="hero-card h-[300px] md:h-[350px] lg:h-[500px] relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0">
@@ -128,77 +136,15 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              {/* About Section Card */}
-              <div className="modern-card p-6 sm:p-8 lg:p-12">
-                <h2 className="grand-title font-montserrat font-black text-xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
-                  About Our Club
-                </h2>
-
-                {/* Full text at the top */}
-                <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
-                    Rotary Club of Gudalur Garden City charted on "01-July-2017"
-                    with the set of service minded people to serve this
-                    community with the long-lasting change. Our few avenues of
-                    services are but not limited to, Ending Polio, Promoting
-                    peace, Fighting disease, Supporting education, Saving
-                    mothers & children and Protecting the environment. We,
-                    together build friendship with the common motto as "Service
-                    Above Self" and connect the dots to make a big impact to the
-                    needy people.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
-                    Our club periodically conducts the camp for Blood donation,
-                    End-Polio, Disease prevention and other service projects in
-                    this vicinity. Kindly watch out event section for upcoming
-                    events and utilize the opportunity and support for our
-                    effort.
-                  </p>
-                  <button
-                    onClick={() => window.open("https://rotary.org", "_blank")}
-                    className="text-emerald-600 hover:text-emerald-700 font-bold text-sm sm:text-lg transition-colors duration-300"
-                  >
-                    Learn More About Rotary →
-                  </button>
-                </div>
-
-                {/* Two info boxes - Side by side on all screens */}
-                <div className="flex flex-row gap-3 sm:gap-6 justify-center">
-                  {/* Active Members - Clickable */}
-                  <div
-                    onClick={() => scrollToSection("board")}
-                    className="bg-gradient-to-br from-teal-50 to-teal-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]"
-                  >
-                    <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">👥</div>
-                    <h3 className="font-black text-xl sm:text-3xl text-teal-600 mb-0.5 sm:mb-2">
-                      25+
-                    </h3>
-                    <p className="text-gray-700 font-semibold text-xs sm:text-base">
-                      Active Members
-                    </p>
-                  </div>
-
-                  {/* Years of Service - Dynamic */}
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-green-200 text-center flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]">
-                    <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">⭐</div>
-                    <h3 className="font-black text-xl sm:text-3xl text-green-600 mb-0.5 sm:mb-2">
-                      {yearsOfService !== null ? yearsOfService : '8'}+
-                    </h3>
-                    <p className="text-gray-700 font-semibold text-xs sm:text-base">
-                      Years of Service
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Notifications Panel - Takes 2 of 5 columns on tablet (wider) */}
           <div className="md:col-span-2 lg:col-span-1">
             <div className="sticky top-24">
-              <div className="modern-card overflow-hidden h-full">
+              <div className="modern-card overflow-hidden h-[300px] md:h-[350px] lg:h-[500px] flex flex-col">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-shrink-0">
                   <h3 className="font-montserrat font-black text-base sm:text-lg lg:text-xl text-white">
                     Upcoming Events
                   </h3>
@@ -207,7 +153,7 @@ export default function HeroSection() {
                 {/* Upcoming Events - On mobile: taps work, swipes scroll page */}
                 <div
                   ref={scrollContainerRef}
-                  className="h-[400px] sm:h-[600px] lg:h-[800px] overflow-y-scroll scrollbar-mobile-show cursor-pointer"
+                  className="flex-1 overflow-hidden relative"
                   onMouseEnter={handleNotificationMouseEnter}
                   onMouseLeave={handleNotificationMouseLeave}
                   onTouchStart={(e) => {
@@ -242,24 +188,22 @@ export default function HeroSection() {
                     // On desktop: allow wheel scroll within the panel
                     if (isPaused && scrollContainerRef.current && window.innerWidth >= 640) {
                       e.preventDefault();
-                      scrollContainerRef.current.scrollTop += e.deltaY;
+                      const container = scrollContainerRef.current;
+                      container.scrollTop += e.deltaY;
                     }
                   }}
                 >
                   <div
-                    ref={notificationScrollRef}
-                    className={`p-4 sm:p-6 space-y-4 sm:space-y-6 ${
-                      isPaused ? "" : "animate-scroll-vertical"
-                    }`}
+                    ref={scrollContentRef}
+                    className={isPaused ? "" : "animate-scroll-vertical-restart"}
                     style={{
-                      animationDuration: "30s",
+                      animationDuration: "20s",
                     }}
                   >
-                    {duplicatedEvents.map((event, index) => (
+                    {upcomingEventsForDisplay.map((event, index) => (
                       <div
                         key={`${event.id}-${index}`}
-                        className="border-b-2 border-gray-100 pb-4 sm:pb-6 last:border-b-0 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors duration-200"
-                        onClick={() => scrollToSection("events")}
+                        className="border-b-2 border-gray-100 pb-4 sm:pb-6 last:border-b-0 rounded-lg p-2"
                       >
                         <div className="flex items-start space-x-3 sm:space-x-4">
                           <span className="inline-block bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs px-2 sm:px-3 py-1 sm:py-2 rounded-full font-bold flex-shrink-0 mt-1 shadow-lg">
@@ -272,7 +216,8 @@ export default function HeroSection() {
                             <p className="text-gray-600 text-xs leading-relaxed line-clamp-2 mb-2 sm:mb-3">
                               {event.description}
                             </p>
-                            <p className="text-emerald-600 text-xs font-bold">
+                            <div className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
+                              <span className="mr-1">📅</span>
                               {new Date(event.event_date).toLocaleDateString(
                                 "en-IN",
                                 {
@@ -281,7 +226,7 @@ export default function HeroSection() {
                                   year: "numeric",
                                 }
                               )}
-                            </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -299,6 +244,67 @@ export default function HeroSection() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* About Section Card - Full Width Below */}
+        <div className="modern-card p-6 sm:p-8 lg:p-12 mt-6 md:mt-8 lg:mt-12">
+          <h2 className="grand-title font-montserrat font-black text-xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
+            About Our Club
+          </h2>
+
+          <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
+              Rotary Club of Gudalur Garden City charted on &quot;01-July-2017&quot;
+              with the set of service minded people to serve this
+              community with the long-lasting change. Our few avenues of
+              services are but not limited to, Ending Polio, Promoting
+              peace, Fighting disease, Supporting education, Saving
+              mothers & children and Protecting the environment. We,
+              together build friendship with the common motto as &quot;Service
+              Above Self&quot; and connect the dots to make a big impact to the
+              needy people.
+            </p>
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
+              Our club periodically conducts the camp for Blood donation,
+              End-Polio, Disease prevention and other service projects in
+              this vicinity. Kindly watch out event section for upcoming
+              events and utilize the opportunity and support for our
+              effort.
+            </p>
+            <button
+              onClick={() => window.open("https://rotary.org", "_blank")}
+              className="text-emerald-600 hover:text-emerald-700 font-bold text-sm sm:text-lg transition-colors duration-300"
+            >
+              Learn More About Rotary →
+            </button>
+          </div>
+
+          <div className="flex flex-row gap-3 sm:gap-6 justify-center">
+            {/* Active Members - Clickable */}
+            <div
+              onClick={() => scrollToSection("board")}
+              className="bg-gradient-to-br from-teal-50 to-teal-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]"
+            >
+              <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">👥</div>
+              <h3 className="font-black text-xl sm:text-3xl text-teal-600 mb-0.5 sm:mb-2">
+                25+
+              </h3>
+              <p className="text-gray-700 font-semibold text-xs sm:text-base">
+                Active Members
+              </p>
+            </div>
+
+            {/* Years of Service - Dynamic */}
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-green-200 text-center flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]">
+              <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">⭐</div>
+              <h3 className="font-black text-xl sm:text-3xl text-green-600 mb-0.5 sm:mb-2">
+                {yearsOfService !== null ? yearsOfService : '8'}+
+              </h3>
+              <p className="text-gray-700 font-semibold text-xs sm:text-base">
+                Years of Service
+              </p>
             </div>
           </div>
         </div>

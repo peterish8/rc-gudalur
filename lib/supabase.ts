@@ -24,7 +24,9 @@ export type Event = {
   title: string;
   description: string | null;
   event_date: string; // Date in format YYYY-MM-DD
-  image_url: string | null;
+  image_url: string | null; // Default/thumbnail image
+  extra_images: string[] | null; // Gallery images array
+  is_upcoming: boolean; // true = upcoming, false = completed
   created_at: string;
 };
 
