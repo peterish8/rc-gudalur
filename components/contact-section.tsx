@@ -3,105 +3,50 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
+import kuralData from "../thirukuraljson.json"
 
+// Define the structure from the JSON file
+interface KuralJSON {
+  Number: number
+  Line1: string
+  Line2: string
+  mv: string
+}
+
+// Internal display interface
 interface Kural {
   number: number
   line1: string
   line2: string
   tamilMeaning: string
-  translation: string
-  chapter: string
 }
 
-// 10 hardcoded fallback kurals (famous ones)
-const FALLBACK_KURALS: Kural[] = [
-  {
-    number: 1,
-    line1: "அகர முதல எழுத்தெல்லாம் ஆதி",
-    line2: "பகவன் முதற்றே உலகு",
-    tamilMeaning: "எழுத்துக்கள் எல்லாம் அகரத்தை அடிப்படையாக கொண்டிருப்பது போல், உலகம் கடவுளை அடிப்படையாக கொண்டிருக்கிறது.",
-    translation: "As all letters have 'A' as their origin, so does the world have the eternal God as its origin.",
-    chapter: "The Praise of God"
-  },
-  {
-    number: 50,
-    line1: "இன்சொலால் ஈரம் அளைஇப் படிறிலவாம்",
-    line2: "செம்பொருள் கண்டார்வாய்ச் சொல்",
-    tamilMeaning: "உண்மையான பொருளை உணர்ந்தவர்களின் வாய்ச்சொல் இனிமையானது, அன்பு கலந்தது, வஞ்சனையற்றது.",
-    translation: "The words of the wise are gentle, moist with kindness, and free from deceit.",
-    chapter: "Sweet Speech"
-  },
-  {
-    number: 391,
-    line1: "கற்க கசடறக் கற்பவை கற்றபின்",
-    line2: "நிற்க அதற்குத் தக",
-    tamilMeaning: "கற்க வேண்டியவற்றை குற்றமறக் கற்று, கற்றபின் அதன்படி நடக்க வேண்டும்.",
-    translation: "Learn thoroughly what should be learnt, and let your conduct be worthy of your learning.",
-    chapter: "Learning"
-  },
-  {
-    number: 396,
-    line1: "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்குக்",
-    line2: "கற்றனைத் தூறும் அறிவு",
-    tamilMeaning: "மணலில் தோண்டத் தோண்ட நீர் சுரப்பது போல், கற்கக் கற்க அறிவு பெருகும்.",
-    translation: "Just as water springs forth higher when you dig deeper in sand, so does knowledge increase with learning.",
-    chapter: "Learning"
-  },
-  {
-    number: 611,
-    line1: "ஆள்வினையும் ஆன்ற அறிவும் என இரண்டின்",
-    line2: "நீள்வினையால் நீளும் குடி",
-    tamilMeaning: "முயற்சியும் சிறந்த அறிவும் ஆகிய இரண்டின் தொடர் செயலால் குடும்பம் உயரும்.",
-    translation: "A family will flourish that possesses both industry and knowledge.",
-    chapter: "Effort"
-  },
-  {
-    number: 662,
-    line1: "வினைக்கண் வினைகெடல் ஓம்பல் வினைக்குறை",
-    line2: "தீர்ந்தாரின் தீர்ந்தன்று உலகு",
-    tamilMeaning: "செயலின் நடுவில் தோல்வியடையாமல் காக்க வேண்டும்; செயலை விட்டவரை உலகம் கைவிடும்.",
-    translation: "Beware of failure in the midst of action; the world abandons those who abandon their work.",
-    chapter: "Energy in Action"
-  },
-  {
-    number: 755,
-    line1: "படைகுடி கூழ்அமைச்சு நட்பரண் ஆறும்",
-    line2: "உடையான் அரசருள் ஏறு",
-    tamilMeaning: "படை, குடி, செல்வம், அமைச்சு, நட்பு, அரண் என்னும் ஆறும் உடையவன் அரசர்களுள் சிங்கம்.",
-    translation: "He is the lion among kings who possesses the six essentials: army, subjects, wealth, ministers, allies, and forts.",
-    chapter: "The Essentials of a State"
-  },
-  {
-    number: 983,
-    line1: "இன்மையின் இன்னாதது யாதெனின் இன்மையின்",
-    line2: "இன்மையே இன்னா தது",
-    tamilMeaning: "வறுமையை விடத் துன்பமானது எது என்றால், வறுமையே மிகவும் துன்பமானது.",
-    translation: "What is more painful than poverty? Nothing is more painful than poverty itself.",
-    chapter: "Poverty"
-  },
-  {
-    number: 1330,
-    line1: "ஊடுதல் காமத்திற்கு இன்பம் அதற்கின்பம்",
-    line2: "கூடி முயங்கப் பெறின்",
-    tamilMeaning: "ஊடல் கொள்வது காதலுக்கு இன்பம்; அதைவிட இன்பம் கூடி மகிழ்வது.",
-    translation: "Feigned anger is the delight of love; and the making-up thereafter is its supreme joy.",
-    chapter: "The Pleasures of Temporary Variance"
-  },
-  {
-    number: 208,
-    line1: "தீயவை செய்தார் கெடுதல் நிழல்தன்னை",
-    line2: "வீயாது அடிஉறைந் தற்று",
-    tamilMeaning: "தீமை செய்தவர் அழிவது, நிழல் காலடியை விட்டு நீங்காமல் தொடர்வது போன்றது.",
-    translation: "Destruction will dwell at the heels of those who commit evil even as their shadow that leaves them not.",
-    chapter: "Fear of Doing Evil"
-  }
-]
+// Extract the kural array from the JSON wrapper and filter 1-1080 only
+const KURALS_1_TO_1080: KuralJSON[] = (kuralData.kural as KuralJSON[]).filter(
+  (k) => k.Number >= 1 && k.Number <= 1080
+)
 
-// Get fallback kural based on day of year
-function getFallbackKural(): Kural {
+// Get the kural number for today (starts with Kural 1 on Jan 1, 2026)
+function getDailyKuralNumber(): number {
   const now = new Date()
-  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24))
-  return FALLBACK_KURALS[dayOfYear % FALLBACK_KURALS.length]
+  const startDate = new Date(2026, 0, 1) // Jan 1, 2026
+  const diff = now.getTime() - startDate.getTime()
+  const oneDay = 1000 * 60 * 60 * 24
+  const daysSinceStart = Math.floor(diff / oneDay)
+  // Cycle through 1080 kurals (Jan 1, 2026 = Kural 1)
+  return (daysSinceStart % 1080) + 1
+}
+
+// Get kural from local JSON by number
+function getKuralByNumber(num: number): Kural | null {
+  const found = KURALS_1_TO_1080.find((k) => k.Number === num)
+  if (!found) return null
+  return {
+    number: found.Number,
+    line1: found.Line1,
+    line2: found.Line2,
+    tamilMeaning: found.mv,
+  }
 }
 
 export default function ContactSection() {
@@ -118,34 +63,10 @@ export default function ContactSection() {
   const [kuralLoading, setKuralLoading] = useState(true)
 
   useEffect(() => {
-    const fetchKural = async () => {
-      try {
-        const response = await fetch(
-          `https://tamil-kural-api.vercel.app/api/daily`
-        )
-        
-        if (response.ok) {
-          const data = await response.json()
-          setKural({
-            number: data.number || 1,
-            line1: data.kural?.[0] || "",
-            line2: data.kural?.[1] || "",
-            tamilMeaning: data.meaning?.ta_mu_va || data.meaning?.ta_salamon || "",
-            translation: data.meaning?.en || "",
-            chapter: data.chapter || ""
-          })
-        } else {
-          throw new Error("API failed")
-        }
-      } catch (error) {
-        console.log("Using fallback kural:", error)
-        setKural(getFallbackKural())
-      } finally {
-        setKuralLoading(false)
-      }
-    }
-
-    fetchKural()
+    const kuralNumber = getDailyKuralNumber()
+    const dailyKural = getKuralByNumber(kuralNumber)
+    setKural(dailyKural)
+    setKuralLoading(false)
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -251,28 +172,7 @@ export default function ContactSection() {
                     </div>
                   )}
 
-                  {/* Divider */}
-                  <div className="flex items-center justify-center gap-2 my-2">
-                    <div className="h-px flex-1 max-w-[30px] bg-gradient-to-r from-transparent to-amber-300"></div>
-                    <span className="text-amber-400 text-xs">✦</span>
-                    <div className="h-px flex-1 max-w-[30px] bg-gradient-to-l from-transparent to-amber-300"></div>
-                  </div>
 
-                  {/* English Translation */}
-                  <div className="text-center mb-3">
-                    <p className="text-gray-600 text-xs sm:text-sm leading-relaxed italic">
-                      "{kural.translation}"
-                    </p>
-                  </div>
-
-                  {/* Chapter */}
-                  {kural.chapter && (
-                    <div className="text-center">
-                      <span className="inline-block bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-semibold">
-                        {kural.chapter}
-                      </span>
-                    </div>
-                  )}
                 </>
               )}
 

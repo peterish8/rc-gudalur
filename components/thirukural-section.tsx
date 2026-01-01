@@ -1,105 +1,52 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import kuralData from "../thirukuraljson.json";
 
+// Define the structure from the JSON file
+interface KuralJSON {
+  Number: number;
+  Line1: string;
+  Line2: string;
+  mv: string;
+  Translation: string;
+  // Other fields exist in JSON but not used for display
+}
+
+// Internal display interface
 interface Kural {
   number: number;
   line1: string;
   line2: string;
-  translation: string;
-  chapter: string;
+  tamilMeaning: string;
 }
 
-// 10 hardcoded fallback kurals (famous ones)
-const FALLBACK_KURALS: Kural[] = [
-  {
-    number: 1,
-    line1: "அகர முதல எழுத்தெல்லாம் ஆதி",
-    line2: "பகவன் முதற்றே உலகு",
-    translation: "As all letters have 'A' as their origin, so does the world have the eternal God as its origin.",
-    chapter: "The Praise of God"
-  },
-  {
-    number: 50,
-    line1: "இன்சொலால் ஈரம் அளைஇப் படிறிலவாம்",
-    line2: "செம்பொருள் கண்டார்வாய்ச் சொல்",
-    translation: "The words of the wise are gentle, moist with kindness, and free from deceit.",
-    chapter: "Sweet Speech"
-  },
-  {
-    number: 101,
-    line1: "பிறனில் விழையாமை என்பான் சிறந்த",
-    line2: "நன்மையின் நன்மையா தொன்று",
-    translation: "Not to covet another's wife is a virtue that excels all other virtues.",
-    chapter: "Not Coveting Another's Wife"
-  },
-  {
-    number: 391,
-    line1: "கற்க கசடறக் கற்பவை கற்றபின்",
-    line2: "நிற்க அதற்குத் தக",
-    translation: "Learn thoroughly what should be learnt, and let your conduct be worthy of your learning.",
-    chapter: "Learning"
-  },
-  {
-    number: 396,
-    line1: "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்குக்",
-    line2: "கற்றனைத் தூறும் அறிவு",
-    translation: "Just as water springs forth higher when you dig deeper in sand, so does knowledge increase with learning.",
-    chapter: "Learning"
-  },
-  {
-    number: 611,
-    line1: "ஆள்வினையும் ஆன்ற அறிவும் என இரண்டின்",
-    line2: "நீள்வினையால் நீளும் குடி",
-    translation: "A family will flourish that possesses both industry and knowledge.",
-    chapter: "Effort"
-  },
-  {
-    number: 662,
-    line1: "வினைக்கண் வினைகெடல் ஓம்பல் வினைக்குறை",
-    line2: "தீர்ந்தாரின் தீர்ந்தன்று உலகு",
-    translation: "Beware of failure in the midst of action; the world abandons those who abandon their work.",
-    chapter: "Energy in Action"
-  },
-  {
-    number: 755,
-    line1: "படைகுடி கூழ்அமைச்சு நட்பரண் ஆறும்",
-    line2: "உடையான் அரசருள் ஏறு",
-    translation: "He is the lion among kings who possesses the six essentials: army, subjects, wealth, ministers, allies, and forts.",
-    chapter: "The Essentials of a State"
-  },
-  {
-    number: 983,
-    line1: "இன்மையின் இன்னாதது யாதெனின் இன்மையின்",
-    line2: "இன்மையே இன்னா தது",
-    translation: "What is more painful than poverty? Nothing is more painful than poverty itself.",
-    chapter: "Poverty"
-  },
-  {
-    number: 1330,
-    line1: "ஊடுதல் காமத்திற்கு இன்பம் அதற்கின்பம்",
-    line2: "கூடி முயங்கப் பெறின்",
-    translation: "Feigned anger is the delight of love; and the making-up thereafter is its supreme joy.",
-    chapter: "The Pleasures of Temporary Variance"
-  }
-];
+// Extract the kural array from the JSON wrapper and filter 1-1080 only
+const KURALS_1_TO_1080: KuralJSON[] = (kuralData.kural as KuralJSON[]).filter(
+  (k) => k.Number >= 1 && k.Number <= 1080
+);
 
-// Get the kural number for today (1-1330 based on day of year)
+// Get the kural number for today (starts with Kural 1 on Jan 1, 2026)
 function getDailyKuralNumber(): number {
   const now = new Date();
-  const startOfYear = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - startOfYear.getTime();
+  const startDate = new Date(2026, 0, 1); // Jan 1, 2026
+  const diff = now.getTime() - startDate.getTime();
   const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  // Cycle through 1330 kurals
-  return (dayOfYear % 1330) + 1;
+  const daysSinceStart = Math.floor(diff / oneDay);
+  // Cycle through 1080 kurals (Jan 1, 2026 = Kural 1)
+  return (daysSinceStart % 1080) + 1;
 }
 
-// Get fallback kural based on day of year
-function getFallbackKural(): Kural {
-  const now = new Date();
-  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-  return FALLBACK_KURALS[dayOfYear % FALLBACK_KURALS.length];
+// Get kural from local JSON by number
+function getKuralByNumber(num: number): Kural | null {
+  const found = KURALS_1_TO_1080.find((k) => k.Number === num);
+  if (!found) return null;
+  return {
+    number: found.Number,
+    line1: found.Line1,
+    line2: found.Line2,
+    tamilMeaning: found.mv,
+  };
 }
 
 export default function ThirukuralSection() {
@@ -108,37 +55,10 @@ export default function ThirukuralSection() {
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    const fetchKural = async () => {
-      const kuralNumber = getDailyKuralNumber();
-      
-      try {
-        // Try the Vercel API first
-        const response = await fetch(
-          `https://api-thirukkural.vercel.app/api?num=${kuralNumber}`,
-          { next: { revalidate: 86400 } } // Cache for 24 hours
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          setKural({
-            number: data.number || kuralNumber,
-            line1: data.line1 || data.kural?.line1 || "",
-            line2: data.line2 || data.kural?.line2 || "",
-            translation: data.eng || data.translation?.en || data.english || "",
-            chapter: data.section?.eng || data.chapter || ""
-          });
-        } else {
-          throw new Error("API failed");
-        }
-      } catch (error) {
-        console.log("Using fallback kural:", error);
-        setKural(getFallbackKural());
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchKural();
+    const kuralNumber = getDailyKuralNumber();
+    const dailyKural = getKuralByNumber(kuralNumber);
+    setKural(dailyKural);
+    setLoading(false);
   }, []);
 
   if (loading) {
@@ -211,21 +131,16 @@ export default function ThirukuralSection() {
                 <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-transparent to-amber-400"></div>
               </div>
 
-              {/* English Translation */}
-              <div className="text-center">
-                <p className="text-gray-700 text-lg sm:text-xl lg:text-2xl leading-relaxed italic max-w-3xl mx-auto">
-                  "{kural.translation}"
-                </p>
-              </div>
-
-              {/* Chapter */}
-              {kural.chapter && (
-                <div className="text-center mt-6">
-                  <span className="inline-block bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-semibold">
-                    {kural.chapter}
-                  </span>
+              {/* Tamil Meaning */}
+              {kural.tamilMeaning && (
+                <div className="text-center mb-6">
+                  <p className="text-gray-800 text-lg sm:text-xl leading-relaxed font-medium">
+                    {kural.tamilMeaning}
+                  </p>
                 </div>
               )}
+
+
             </div>
 
             {/* Bottom accent */}
