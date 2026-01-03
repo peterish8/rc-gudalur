@@ -17,7 +17,7 @@ export default function Footer() {
 
           <div className="text-center">
             <p className="text-white/80 font-semibold">Club ID: 88574 | RI District: 3000</p>
-            <p className="text-white/80 font-semibold mt-1">Chartered: 2020</p>
+            <p className="text-white/80 font-semibold mt-1">Chartered: 2017</p>
           </div>
 
           <div className="text-center md:text-right">
