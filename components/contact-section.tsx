@@ -232,7 +232,7 @@ export default function ContactSection() {
                 </svg>
               </a>
               <a
-                href="https://youtube.com/@gudalurgardencity?si=OsjWddQajHsXTrvg"
+                href="https://youtube.com/@rotaryclubofgudalurgardencity?si=AFx9XzOzAKULCygX"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300"

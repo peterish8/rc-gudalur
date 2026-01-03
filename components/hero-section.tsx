@@ -2,17 +2,20 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { supabase, type Event } from "@/lib/supabase";
+import { supabase, type Event, type CommunityAd } from "@/lib/supabase";
 
 export default function HeroSection() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isPaused, setIsPaused] = useState(false);
-  const [yearsOfService, setYearsOfService] = useState<number | null>(null); // Client-side only
+  const [yearsOfService, setYearsOfService] = useState<number | null>(null);
+  const [communityAds, setCommunityAds] = useState<CommunityAd[]>([]);
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [isAdHovered, setIsAdHovered] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  // const notificationScrollRef = useRef<HTMLDivElement>(null); // Commented out unused ref
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
+
 
   useEffect(() => {
     const calculateHeaderHeight = () => {
@@ -36,6 +39,7 @@ export default function HeroSection() {
 
   useEffect(() => {
     fetchEvents();
+    fetchCommunityAds();
 
     // Calculate years of service on client only to avoid hydration mismatch
     const startDate = new Date(2017, 6, 1); // July 1, 2017
@@ -70,6 +74,42 @@ export default function HeroSection() {
       console.error("Network error fetching events:", error);
       setEvents([]);
     }
+  };
+
+  const fetchCommunityAds = async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from("community_ads")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        setCommunityAds(data);
+      }
+    } catch (err) {
+      console.error("Error fetching community ads:", err);
+    }
+  };
+
+  // Auto-rotate ads every 10 seconds
+  useEffect(() => {
+    if (communityAds.length <= 1 || isAdHovered) return;
+    
+    const interval = setInterval(() => {
+      setCurrentAdIndex((prev) => (prev + 1) % communityAds.length);
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [communityAds.length, isAdHovered]);
+
+  const nextAd = () => {
+    setCurrentAdIndex((prev) => (prev + 1) % communityAds.length);
+  };
+
+  const prevAd = () => {
+    setCurrentAdIndex((prev) => (prev - 1 + communityAds.length) % communityAds.length);
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -248,14 +288,16 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* About Section Card - Full Width Below */}
-        <div className="modern-card p-6 sm:p-8 lg:p-12 mt-6 md:mt-8 lg:mt-12">
-          <h2 className="grand-title font-montserrat font-black text-xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
+        {/* About Section + Community Ad - Side by Side */}
+        <div className="grid lg:grid-cols-3 gap-6 mt-6 md:mt-8 lg:mt-12">
+          {/* About Our Club - Left Side (2 cols) */}
+          <div className="lg:col-span-2 modern-card p-4 sm:p-6 lg:p-8 h-[300px] md:h-[350px] lg:h-[500px]">
+          <h2 className="grand-title font-montserrat font-black text-lg sm:text-2xl lg:text-3xl mb-3 sm:mb-4">
             About Our Club
           </h2>
 
-          <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
+          <div className="space-y-2 sm:space-y-3 mb-3 lg:mb-4">
+            <p className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base font-semibold text-justify sm:text-left">
               Rotary Club of Gudalur Garden City charted on &quot;01-July-2017&quot;
               with the set of service minded people to serve this
               community with the long-lasting change. Our few avenues of
@@ -266,7 +308,7 @@ export default function HeroSection() {
               Above Self&quot; and connect the dots to make a big impact to the
               needy people.
             </p>
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-xl font-bold text-justify sm:text-left">
+            <p className="text-gray-700 leading-relaxed text-xs sm:text-sm lg:text-base font-semibold text-justify sm:text-left">
               Our club periodically conducts the camp for Blood donation,
               End-Polio, Disease prevention and other service projects in
               this vicinity. Kindly watch out event section for upcoming
@@ -275,38 +317,139 @@ export default function HeroSection() {
             </p>
             <button
               onClick={() => window.open("https://rotary.org", "_blank")}
-              className="text-emerald-600 hover:text-emerald-700 font-bold text-sm sm:text-lg transition-colors duration-300"
+              className="text-emerald-600 hover:text-emerald-700 font-bold text-xs sm:text-sm transition-colors duration-300"
             >
               Learn More About Rotary →
             </button>
           </div>
 
-          <div className="flex flex-row gap-3 sm:gap-6 justify-center">
+          <div className="flex flex-row gap-2 sm:gap-4 justify-center">
             {/* Active Members - Clickable */}
             <div
               onClick={() => scrollToSection("board")}
-              className="bg-gradient-to-br from-teal-50 to-teal-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]"
+              className="bg-gradient-to-br from-teal-50 to-teal-100 p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[120px] sm:max-w-[140px]"
             >
-              <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">👥</div>
-              <h3 className="font-black text-xl sm:text-3xl text-teal-600 mb-0.5 sm:mb-2">
+              <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">👥</div>
+              <h3 className="font-black text-lg sm:text-xl text-teal-600 mb-0">
                 25+
               </h3>
-              <p className="text-gray-700 font-semibold text-xs sm:text-base">
+              <p className="text-gray-700 font-semibold text-[10px] sm:text-xs">
                 Active Members
               </p>
             </div>
 
             {/* Years of Service - Dynamic */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl border-2 border-green-200 text-center flex-1 max-w-[160px] sm:max-w-none sm:min-w-[200px]">
-              <div className="text-2xl sm:text-4xl mb-1 sm:mb-3">⭐</div>
-              <h3 className="font-black text-xl sm:text-3xl text-green-600 mb-0.5 sm:mb-2">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border-2 border-green-200 text-center flex-1 max-w-[120px] sm:max-w-[140px]">
+              <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">⭐</div>
+              <h3 className="font-black text-lg sm:text-xl text-green-600 mb-0">
                 {yearsOfService !== null ? yearsOfService : '8'}+
               </h3>
-              <p className="text-gray-700 font-semibold text-xs sm:text-base">
+              <p className="text-gray-700 font-semibold text-[10px] sm:text-xs">
                 Years of Service
               </p>
             </div>
           </div>
+          </div>
+
+          {/* Community Ads Carousel - Right Side (1 col) */}
+          {communityAds.length > 0 && (
+            <div className="lg:col-span-1">
+              <div
+                className="modern-card overflow-hidden h-[300px] md:h-[350px] lg:h-[500px] flex flex-col relative group"
+                onMouseEnter={() => setIsAdHovered(true)}
+                onMouseLeave={() => setIsAdHovered(false)}
+              >
+                {/* Ad Header */}
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3 text-center flex items-center justify-between">
+                  <p className="text-white font-bold text-sm flex-1">Community Partner</p>
+                  {communityAds.length > 1 && (
+                    <span className="text-white/70 text-xs">{currentAdIndex + 1}/{communityAds.length}</span>
+                  )}
+                </div>
+                
+                {/* Ad Content with slide animation */}
+                <div className="relative flex-1 overflow-hidden">
+                  <div 
+                    className="flex h-full transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentAdIndex * 100}%)` }}
+                  >
+                    {communityAds.map((ad, index) => (
+                      <div
+                        key={ad.id}
+                        className={`relative flex-shrink-0 w-full h-full cursor-pointer ${ad.link_url ? "hover:opacity-95" : ""}`}
+                        onClick={() => {
+                          if (ad.link_url) {
+                            window.open(ad.link_url, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                      >
+                        <Image
+                          src={ad.image_url}
+                          alt={ad.title}
+                          fill
+                          className="object-cover"
+                        />
+                        {ad.link_url && (
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-end pb-4 pr-4">
+                            <p className="text-white text-sm font-medium flex items-center gap-1 bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              Visit
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Navigation Buttons - Show on Hover */}
+                {communityAds.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); prevAd(); }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); nextAd(); }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+                
+                {/* Ad Title */}
+                <div className="p-4 text-center bg-white">
+                  <h4 className="font-montserrat font-bold text-gray-900 text-sm sm:text-base">
+                    {communityAds[currentAdIndex]?.title}
+                  </h4>
+                </div>
+
+                {/* Dot Indicators */}
+                {communityAds.length > 1 && (
+                  <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                    {communityAds.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => { e.stopPropagation(); setCurrentAdIndex(index); }}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentAdIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/70"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

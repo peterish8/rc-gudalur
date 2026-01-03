@@ -38,13 +38,6 @@ export type BoardMember = {
   created_at: string;
 };
 
-export type GalleryImage = {
-  id: string; // UUID
-  title: string;
-  description: string | null;
-  image_url: string;
-  created_at: string;
-};
 
 export type About = {
   id: number;
@@ -59,3 +52,14 @@ export type ContactSubmission = {
   phone?: string;
   message: string;
 };
+
+export type CommunityAd = {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+

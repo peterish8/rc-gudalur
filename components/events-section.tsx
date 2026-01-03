@@ -9,10 +9,7 @@ export default function EventsSection() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
-  const [scrollDuration, setScrollDuration] = useState("40s")
-  // const [galleryOpen, setGalleryOpen] = useState(false) // Removed
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0) // Removed
-
+  
   const openGalleryInMainSection = () => {
     if (selectedEvent) {
        // Dispatch custom event for Gallery Section to pick up
@@ -20,21 +17,15 @@ export default function EventsSection() {
     }
   }
   const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollPosRef = useRef(0) // Ref for sub-pixel precision
   const startXRef = useRef(0)
   const scrollLeftRef = useRef(0)
   const hasMovedRef = useRef(false)
+  const resumeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     fetchEvents()
-    
-    // Set initial duration based on width
-    const handleResize = () => {
-        setScrollDuration(window.innerWidth < 640 ? "10s" : "20s");
-    };
-    
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // CSS resize listener removed as speed is now calculated in loop
   }, [])
 
   const fetchEvents = async () => {
@@ -69,61 +60,78 @@ export default function EventsSection() {
     }
   };
 
-  // Events to display (no duplication)
-  const displayEvents = events;
+  // Events to display (Triplicated for seamless loop)
+  const displayEvents = [...events, ...events, ...events];
+
+  // Auto-Scroll Loop (Replaces CSS Animation)
+  useEffect(() => {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer || isPaused || isDragging || events.length === 0) return
+
+    // Sync ref with current DOM state before starting
+    scrollPosRef.current = scrollContainer.scrollLeft
+
+    let animationId: number
+    const animate = () => {
+      // Logic for seamless loop: When we scroll past the first set (1/3 of total width), reset to 0
+      if (scrollPosRef.current >= scrollContainer.scrollWidth / 3) {
+        scrollPosRef.current = 0
+        scrollContainer.scrollLeft = 0
+      } else {
+        // Match scroll speed with Gallery
+        // Slower speed on mobile (0.4) vs Desktop (0.8)
+        const isMobile = window.innerWidth < 640;
+        const speed = isMobile ? 0.4 : 0.8;
+        
+        scrollPosRef.current += speed
+        scrollContainer.scrollLeft = scrollPosRef.current
+      }
+      animationId = requestAnimationFrame(animate)
+    }
+    animationId = requestAnimationFrame(animate)
+
+    return () => cancelAnimationFrame(animationId)
+  }, [isPaused, isDragging, events])
+
+  // Interaction handlers
+  const handleMouseEnter = () => {
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
+    setIsPaused(true)
+  }
+
+  const handleMouseLeave = () => {
+    if (!isDragging) {
+      resumeTimeoutRef.current = setTimeout(() => setIsPaused(false), 300)
+    }
+  }
+
+  const handleInteractionStart = (clientX: number) => {
+    if (!scrollRef.current) return
+    setIsDragging(true)
+    hasMovedRef.current = false
+    startXRef.current = clientX
+    scrollLeftRef.current = scrollRef.current.scrollLeft
+  }
+
+  const handleInteractionMove = (clientX: number) => {
+    if (!isDragging || !scrollRef.current) return
+    const x = clientX
+    const walk = (startXRef.current - x) * 1.5
+    if (Math.abs(walk) > 5) hasMovedRef.current = true
+    scrollRef.current.scrollLeft = scrollLeftRef.current + walk
+    scrollPosRef.current = scrollRef.current.scrollLeft
+  }
+
+  const handleInteractionEnd = () => {
+    setIsDragging(false)
+    resumeTimeoutRef.current = setTimeout(() => setIsPaused(false), 1500)
+  }
 
   const handleEventClick = (event: Event) => {
     if (!hasMovedRef.current) {
       setSelectedEvent(event)
     }
   }
-
-  const handleInteractionStart = (clientX: number) => {
-    setIsPaused(true)
-    setIsDragging(true)
-    hasMovedRef.current = false
-    startXRef.current = clientX
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = "paused"
-      scrollLeftRef.current = scrollRef.current.scrollLeft
-    }
-  }
-
-  const handleInteractionMove = (clientX: number) => {
-    if (!isDragging || !scrollRef.current) return
-    const deltaX = Math.abs(clientX - startXRef.current)
-    if (deltaX > 5) {
-      hasMovedRef.current = true
-      const walk = (clientX - startXRef.current) * 2
-      scrollRef.current.scrollLeft = scrollLeftRef.current - walk
-    }
-  }
-
-  const handleInteractionEnd = () => {
-    setIsDragging(false)
-  }
-
-  const handleMouseEnter = () => {
-    if (!isDragging) {
-      setIsPaused(true)
-      if (scrollRef.current) {
-        scrollRef.current.style.animationPlayState = "paused"
-      }
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (!isDragging) {
-      setIsPaused(false)
-      if (scrollRef.current) {
-        scrollRef.current.style.animationPlayState = "running"
-      }
-    }
-  }
-
-  // Gallery functions
-  // Legacy gallery functions removed
-
 
   // Get all gallery images for the selected event
   const galleryImages = selectedEvent?.extra_images || []
@@ -147,40 +155,21 @@ export default function EventsSection() {
           <div className="scroll-fade-container overflow-hidden py-4">
             <div
               ref={scrollRef}
-              className={`flex gap-6 animate-scroll-right ${isPaused ? (isDragging ? "cursor-grabbing" : "cursor-grab") : ""}`}
-              style={{
-                animationDuration: scrollDuration,
-                width: "fit-content",
-                animationPlayState: isPaused ? "paused" : "running",
-                animationIterationCount: "infinite",
-              }}
+              className={`flex gap-6 overflow-x-auto pb-4 scrollbar-hide ${isPaused ? (isDragging ? "cursor-grabbing" : "cursor-grab") : ""}`}
+              style={{ width: "100%" }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              onMouseDown={(e) => handleInteractionStart(e.pageX)}
-              onMouseMove={(e) => handleInteractionMove(e.pageX)}
+              onMouseDown={(e) => handleInteractionStart(e.clientX)}
+              onMouseMove={(e) => handleInteractionMove(e.clientX)}
               onMouseUp={handleInteractionEnd}
-              onTouchStart={(e) => {
-                handleInteractionStart(e.touches[0].clientX)
-              }}
-              onTouchMove={(e) => {
-                if (hasMovedRef.current) {
-                  e.preventDefault()
-                }
-                handleInteractionMove(e.touches[0].clientX)
-              }}
-              onTouchEnd={() => {
-                handleInteractionEnd()
-              }}
-              onWheel={(e) => {
-                if (isPaused && scrollRef.current) {
-                  scrollRef.current.scrollLeft += e.deltaY
-                }
-              }}
+              onTouchStart={(e) => { handleMouseEnter(); handleInteractionStart(e.touches[0].clientX); }}
+              onTouchMove={(e) => handleInteractionMove(e.touches[0].clientX)}
+              onTouchEnd={() => { handleInteractionEnd(); handleMouseLeave(); }}
             >
               {displayEvents.map((event, index) => (
                 <div
                   key={`${event.id}-${index}`}
-                  className={`flex-shrink-0 w-64 h-72 sm:w-72 sm:h-76 md:w-80 md:h-80 modern-card overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-2xl ${
+                  className={`flex-shrink-0 w-64 h-72 sm:w-72 sm:h-76 md:w-80 md:h-80 modern-card overflow-hidden cursor-pointer group transition-all duration-300 ${
                     selectedEvent?.id === event.id ? "ring-4 ring-emerald-500 shadow-2xl" : ""
                   }`}
                   onClick={() => handleEventClick(event)}
