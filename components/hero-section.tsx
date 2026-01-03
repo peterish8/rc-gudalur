@@ -83,7 +83,7 @@ export default function HeroSection() {
         .from("community_ads")
         .select("*")
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .order("display_order", { ascending: true });
 
       if (!error && data && data.length > 0) {
         setCommunityAds(data);
@@ -93,16 +93,19 @@ export default function HeroSection() {
     }
   };
 
-  // Auto-rotate ads every 10 seconds
+  // Auto-rotate ads using per-ad duration
   useEffect(() => {
     if (communityAds.length <= 1 || isAdHovered) return;
     
+    // Get current ad's duration (fallback to 10 seconds)
+    const currentDuration = communityAds[currentAdIndex]?.duration_seconds || 10;
+    
     const interval = setInterval(() => {
       setCurrentAdIndex((prev) => (prev + 1) % communityAds.length);
-    }, 10000); // 10 seconds
+    }, currentDuration * 1000);
 
     return () => clearInterval(interval);
-  }, [communityAds.length, isAdHovered]);
+  }, [communityAds.length, isAdHovered, currentAdIndex, communityAds]);
 
   const nextAd = () => {
     setCurrentAdIndex((prev) => (prev + 1) % communityAds.length);

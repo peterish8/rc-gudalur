@@ -59,6 +59,8 @@ export type CommunityAd = {
   image_url: string;
   link_url: string | null;
   is_active: boolean;
+  duration_seconds: number;  // Seconds to display this ad (default: 10)
+  display_order: number;     // Lower numbers appear first (default: 0)
   created_at: string;
   updated_at: string;
 };
