@@ -6,12 +6,14 @@ import type { Event } from "@/lib/types"
 import { loadWithFallback } from "@/lib/load-with-fallback"
 import { api } from "@/convex/_generated/api"
 import { getMockPastEvents } from "@/lib/mock-data"
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 
 export default function EventsSection() {
   const [events, setEvents] = useState<Event[]>([])
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
   
   const openGalleryInMainSection = () => {
     if (selectedEvent) {
@@ -47,7 +49,7 @@ export default function EventsSection() {
   // Auto-Scroll Loop (Replaces CSS Animation)
   useEffect(() => {
     const scrollContainer = scrollRef.current
-    if (!scrollContainer || isPaused || isDragging || events.length === 0) return
+    if (!scrollContainer || isPaused || isDragging || reducedMotion || events.length === 0) return
 
     // Sync ref with current DOM state before starting
     scrollPosRef.current = scrollContainer.scrollLeft
@@ -72,7 +74,7 @@ export default function EventsSection() {
     animationId = requestAnimationFrame(animate)
 
     return () => cancelAnimationFrame(animationId)
-  }, [isPaused, isDragging, events])
+  }, [isPaused, isDragging, reducedMotion, events])
 
   // Interaction handlers
   const handleMouseEnter = () => {
@@ -150,25 +152,38 @@ export default function EventsSection() {
               {displayEvents.map((event, index) => (
                 <div
                   key={`${event.id}-${index}`}
-                  className={`flex-shrink-0 w-64 h-72 sm:w-72 sm:h-76 md:w-80 md:h-80 modern-card overflow-hidden cursor-pointer group transition-all duration-300 ${
+                  className={`flex-shrink-0 w-64 h-72 sm:w-72 sm:h-76 md:w-80 md:h-80 modern-card overflow-hidden cursor-pointer group transition duration-300 ${
                     selectedEvent?.id === event.id ? "ring-4 ring-emerald-500 shadow-2xl" : ""
                   }`}
                   onClick={() => handleEventClick(event)}
+                  role="button"
+                  tabIndex={index < events.length ? 0 : -1}
+                  aria-hidden={index >= events.length ? true : undefined}
+                  aria-pressed={selectedEvent?.id === event.id}
+                  aria-label={`Show details for ${event.title}`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setSelectedEvent(event)
+                    }
+                  }}
+                  onFocus={() => setIsPaused(true)}
+                  onBlur={() => setIsPaused(false)}
                 >
                   <div className="relative h-48 overflow-hidden">
                     <Image
                       src={event.image_url || (event.extra_images && event.extra_images.length > 0 ? event.extra_images[0] : "/placeholder.svg?height=224&width=336&query=community event")}
                       alt={event.title}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-white text-sm font-semibold">Click to view details</p>
+                      <p className="text-white text-sm font-semibold">View details</p>
                     </div>
                     {selectedEvent?.id === event.id && (
-                      <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                        SELECTED
+                      <div className="absolute top-4 right-4 bg-emerald-700 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        Showing below
                       </div>
                     )}
                   </div>

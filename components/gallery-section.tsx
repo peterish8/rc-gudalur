@@ -6,6 +6,8 @@ import type { Event } from "@/lib/types"
 import { loadWithFallback } from "@/lib/load-with-fallback"
 import { api } from "@/convex/_generated/api"
 import { getMockPastEvents } from "@/lib/mock-data"
+import { Images } from "lucide-react"
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 
 export default function GallerySection() {
   const [events, setEvents] = useState<Event[]>([])
@@ -22,6 +24,7 @@ export default function GallerySection() {
   const scrollPosRef = useRef(0)
 
   const [isFocusMode, setIsFocusMode] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     fetchEvents()
@@ -103,7 +106,7 @@ export default function GallerySection() {
   // Auto-Scroll Loop
   useEffect(() => {
     const scrollContainer = topRowRef.current
-    if (!scrollContainer || topRowPaused || topRowDragging) return
+    if (!scrollContainer || topRowPaused || topRowDragging || reducedMotion) return
 
     // Sync ref with current DOM state before starting
     scrollPosRef.current = scrollContainer.scrollLeft
@@ -129,7 +132,7 @@ export default function GallerySection() {
     animationId = requestAnimationFrame(animate)
 
     return () => cancelAnimationFrame(animationId)
-  }, [topRowPaused, topRowDragging, events])
+  }, [topRowPaused, topRowDragging, reducedMotion, events])
 
   // Row Handlers
   const handleTopRowMouseEnter = () => {
@@ -179,6 +182,18 @@ export default function GallerySection() {
     }, 2000)
   }
 
+  // Lightbox keyboard: Esc closes, arrow keys step through photos.
+  useEffect(() => {
+    if (!selectedEvent) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox()
+      else if (e.key === "ArrowRight") nextImage()
+      else if (e.key === "ArrowLeft") prevImage()
+    }
+    document.addEventListener("keydown", onKey)
+    return () => document.removeEventListener("keydown", onKey)
+  })
+
   // Lightbox functions
   const openLightbox = (event: Event) => {
     setSelectedEvent(event)
@@ -221,9 +236,7 @@ export default function GallerySection() {
       <div className="w-full">
         <div className="container mx-auto px-4 text-center mb-16">
           <h2 className="grand-title font-montserrat font-black text-4xl sm:text-5xl lg:text-7xl mb-6">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-              Gallery
-            </span>
+            <span className="text-emerald-700">Gallery</span>
           </h2>
           <p className="text-gray-600 text-lg sm:text-xl font-medium max-w-3xl mx-auto">
             Capturing moments of service, fellowship, and community impact.
@@ -239,7 +252,7 @@ export default function GallerySection() {
             </div>
         ) : events.length === 0 ? (
            <div className="text-center py-20">
-             <div className="text-6xl mb-4">📸</div>
+             <Images className="mx-auto mb-4 h-12 w-12 text-gray-400" aria-hidden />
              <p className="text-gray-500 text-xl font-medium">No gallery images found yet.</p>
              <p className="text-gray-400">Check back soon for updates!</p>
            </div>
@@ -292,13 +305,24 @@ export default function GallerySection() {
                         openLightbox(event)
                       }
                     }}
+                    role="button"
+                    tabIndex={setIndex === 0 ? 0 : -1}
+                    aria-hidden={setIndex === 0 ? undefined : true}
+                    aria-label={`Open ${photoCount} photos from ${event.title}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        openLightbox(event)
+                      }
+                    }}
+                    onFocus={() => setTopRowPaused(true)}
                   >
                      <div className="relative h-56 overflow-hidden">
                       <Image
                         src={thumbnail}
                         alt={event.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       
@@ -332,11 +356,16 @@ export default function GallerySection() {
           <div
             className="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex flex-col items-center justify-center overflow-hidden"
             onClick={closeLightbox}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Photos from ${selectedEvent.title}`}
           >
             {/* Close Button - Hides in Focus Mode */}
             <button
               onClick={closeLightbox}
-              className={`absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all duration-300 ${
+              aria-label="Close photos"
+              autoFocus
+              className={`absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition duration-300 ${
                 isFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
             >
@@ -348,7 +377,8 @@ export default function GallerySection() {
             {/* Navigation Buttons - Click to exit focus & nav */}
             <button
               onClick={(e) => { e.stopPropagation(); prevImage(); }}
-              className={`absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all duration-300 ${
+              aria-label="Previous photo"
+              className={`absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition duration-300 ${
                 isFocusMode ? "opacity-0 hover:opacity-100" : "opacity-100"
               }`}
             >
@@ -359,7 +389,8 @@ export default function GallerySection() {
 
             <button
               onClick={(e) => { e.stopPropagation(); nextImage(); }}
-              className={`absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-all duration-300 ${
+              aria-label="Next photo"
+              className={`absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition duration-300 ${
                 isFocusMode ? "opacity-0 hover:opacity-100" : "opacity-100"
               }`}
             >
@@ -412,7 +443,7 @@ export default function GallerySection() {
                 return (
                   <div
                     key={idx}
-                    className={`absolute transition-all duration-500 ease-out origin-center ${transformClass}`}
+                    className={`absolute transition duration-500 ease-out origin-center ${transformClass}`}
                     onClick={() => {
                         if (isCenter) {
                             setIsFocusMode(!isFocusMode);
@@ -440,7 +471,7 @@ export default function GallerySection() {
             </div>
 
             {/* Info & Thumbnails - Hides in Focus Mode */}
-            <div className={`absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center transition-all duration-500 ${isFocusMode ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"}`} onClick={(e) => e.stopPropagation()}>
+            <div className={`absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center transition duration-500 ${isFocusMode ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"}`} onClick={(e) => e.stopPropagation()}>
                 <div className="text-center mb-4">
                   <h3 className="text-white text-xl font-bold drop-shadow-md">{selectedEvent.title}</h3>
                   <p className="text-gray-300 text-sm">{currentImageIndex + 1} / {getEventImages(selectedEvent).length}</p>
@@ -451,7 +482,7 @@ export default function GallerySection() {
                     <button
                       key={idx}
                       onClick={() => setCurrentImageIndex(idx)}
-                      className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                      className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition duration-300 ${
                         idx === currentImageIndex ? "border-emerald-500 scale-110 ring-2 ring-emerald-500/50" : "border-transparent opacity-50 hover:opacity-100"
                       }`}
                     >

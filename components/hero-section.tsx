@@ -6,6 +6,8 @@ import type { Event, CommunityAd } from "@/lib/types";
 import { loadWithFallback } from "@/lib/load-with-fallback";
 import { api } from "@/convex/_generated/api";
 import { getMockUpcomingEvents, MOCK_COMMUNITY_ADS } from "@/lib/mock-data";
+import { ArrowRight, CalendarDays, Star, Users } from "lucide-react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export default function HeroSection() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -14,6 +16,7 @@ export default function HeroSection() {
   const [communityAds, setCommunityAds] = useState<CommunityAd[]>([]);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isAdHovered, setIsAdHovered] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
@@ -216,7 +219,7 @@ export default function HeroSection() {
                 >
                   <div
                     ref={scrollContentRef}
-                    className={isPaused ? "" : "animate-scroll-vertical-restart"}
+                    className={isPaused || reducedMotion ? "" : "animate-scroll-vertical-restart"}
                     style={{
                       animationDuration: "20s",
                     }}
@@ -227,9 +230,6 @@ export default function HeroSection() {
                         className="border-b-2 border-gray-100 pb-4 sm:pb-6 last:border-b-0 rounded-lg p-2"
                       >
                         <div className="flex items-start space-x-3 sm:space-x-4">
-                          <span className="inline-block bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs px-2 sm:px-3 py-1 sm:py-2 rounded-full font-bold flex-shrink-0 mt-1 shadow-lg">
-                            NEW
-                          </span>
                           <div className="flex-1">
                             <h5 className="font-bold text-gray-900 text-sm mb-2 leading-tight">
                               {event.title}
@@ -238,7 +238,7 @@ export default function HeroSection() {
                               {event.description}
                             </p>
                             <div className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
-                              <span className="mr-1">📅</span>
+                              <CalendarDays className="mr-1 h-3.5 w-3.5" aria-hidden />
                               {new Date(event.event_date).toLocaleDateString(
                                 "en-IN",
                                 {
@@ -261,7 +261,9 @@ export default function HeroSection() {
                     onClick={() => scrollToSection("events")}
                     className="text-emerald-600 hover:text-emerald-700 font-bold transition-colors duration-300 text-sm sm:text-base"
                   >
-                    &lt;&lt; View All Events &gt;&gt;
+                    <span className="inline-flex items-center gap-1">
+                      View all events <ArrowRight className="h-4 w-4" aria-hidden />
+                    </span>
                   </button>
                 </div>
               </div>
@@ -308,9 +310,18 @@ export default function HeroSection() {
             {/* Active Members - Clickable */}
             <div
               onClick={() => scrollToSection("board")}
-              className="bg-gradient-to-br from-teal-50 to-teal-100 p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 flex-1 max-w-[120px] sm:max-w-[140px]"
+              role="button"
+              tabIndex={0}
+              aria-label="25+ active members. Go to board members"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  scrollToSection("board");
+                }
+              }}
+              className="bg-gradient-to-br from-teal-50 to-teal-100 p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-shadow duration-200 flex-1 max-w-[120px] sm:max-w-[140px]"
             >
-              <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">👥</div>
+              <Users className="mx-auto mb-0.5 h-5 w-5 text-teal-700 sm:mb-1 sm:h-6 sm:w-6" aria-hidden />
               <h3 className="font-black text-lg sm:text-xl text-teal-600 mb-0">
                 25+
               </h3>
@@ -321,7 +332,7 @@ export default function HeroSection() {
 
             {/* Years of Service - Dynamic */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border-2 border-green-200 text-center flex-1 max-w-[120px] sm:max-w-[140px]">
-              <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">⭐</div>
+              <Star className="mx-auto mb-0.5 h-5 w-5 text-green-700 sm:mb-1 sm:h-6 sm:w-6" aria-hidden />
               <h3 className="font-black text-lg sm:text-xl text-green-600 mb-0">
                 {yearsOfService !== null ? yearsOfService : '8'}+
               </h3>
@@ -421,7 +432,7 @@ export default function HeroSection() {
                       <button
                         key={index}
                         onClick={(e) => { e.stopPropagation(); setCurrentAdIndex(index); }}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        className={`w-2 h-2 rounded-full transition duration-300 ${
                           index === currentAdIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/70"
                         }`}
                       />

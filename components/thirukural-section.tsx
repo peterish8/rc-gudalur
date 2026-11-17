@@ -31,7 +31,7 @@ export default function ThirukuralSection() {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-orange-600 to-red-600 mb-3">
+            <h2 className="font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl text-amber-800 mb-3">
               திருக்குறள்
             </h2>
             <p className="text-amber-700 font-semibold text-lg sm:text-xl">
@@ -41,7 +41,7 @@ export default function ThirukuralSection() {
 
           {/* Main Card */}
           <div 
-            className={`relative bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-amber-200 overflow-hidden transition-all duration-500 ${isHovered ? 'shadow-amber-300/50 scale-[1.01]' : ''}`}
+            className={`relative bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-amber-200 overflow-hidden transition duration-500 ${isHovered ? 'shadow-amber-300/50 scale-[1.01]' : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
