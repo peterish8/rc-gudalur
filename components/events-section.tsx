@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
-import { supabase, type Event } from "@/lib/supabase"
+import type { Event } from "@/lib/types"
+import { loadWithFallback } from "@/lib/load-with-fallback"
+import { api } from "@/convex/_generated/api"
+import { getMockPastEvents } from "@/lib/mock-data"
 
 export default function EventsSection() {
   const [events, setEvents] = useState<Event[]>([])
@@ -29,35 +32,13 @@ export default function EventsSection() {
   }, [])
 
   const fetchEvents = async () => {
-    if (!supabase) {
-      console.warn("Supabase not initialized");
-      setEvents([]);
-      return;
-    }
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("is_upcoming", false) // Only fetch completed events
-        .order("event_date", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching events:", error);
-        setEvents([]);
-        setSelectedEvent(null);
-      } else {
-        setEvents(data || []);
-        if (data && data.length > 0) {
-          setSelectedEvent(data[0]);
-        } else {
-          setSelectedEvent(null);
-        }
-      }
-    } catch (error) {
-      console.error("Network error fetching events:", error);
-      setEvents([]);
-      setSelectedEvent(null);
-    }
+    const rows = await loadWithFallback<Event>(
+      "Past events",
+      (client) => client.query(api.events.listPast, { order: "asc" }) as Promise<Event[]>,
+      getMockPastEvents,
+    );
+    setEvents(rows);
+    setSelectedEvent(rows[0] ?? null);
   };
 
   // Events to display (Triplicated for seamless loop)

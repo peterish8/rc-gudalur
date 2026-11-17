@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { supabase, type Event, type CommunityAd } from "@/lib/supabase";
+import type { Event, CommunityAd } from "@/lib/types";
+import { loadWithFallback } from "@/lib/load-with-fallback";
+import { api } from "@/convex/_generated/api";
+import { getMockUpcomingEvents, MOCK_COMMUNITY_ADS } from "@/lib/mock-data";
 
 export default function HeroSection() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -51,46 +54,21 @@ export default function HeroSection() {
   }, []);
 
   const fetchEvents = async () => {
-    if (!supabase) {
-      console.warn("Supabase not initialized");
-      setEvents([]);
-      return;
-    }
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("is_upcoming", true) // Only fetch upcoming events
-        .order("event_date", { ascending: true })
-        .limit(5);
-
-      if (error) {
-        console.error("Error fetching events:", error);
-        setEvents([]);
-      } else {
-        setEvents(data || []);
-      }
-    } catch (error) {
-      console.error("Network error fetching events:", error);
-      setEvents([]);
-    }
+    const rows = await loadWithFallback<Event>(
+      "Upcoming events",
+      (client) => client.query(api.events.listUpcoming, { limit: 5 }) as Promise<Event[]>,
+      getMockUpcomingEvents,
+    );
+    setEvents(rows);
   };
 
   const fetchCommunityAds = async () => {
-    if (!supabase) return;
-    try {
-      const { data, error } = await supabase
-        .from("community_ads")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
-
-      if (!error && data && data.length > 0) {
-        setCommunityAds(data);
-      }
-    } catch (err) {
-      console.error("Error fetching community ads:", err);
-    }
+    const rows = await loadWithFallback<CommunityAd>(
+      "Community ads",
+      (client) => client.query(api.communityAds.listActive, {}) as Promise<CommunityAd[]>,
+      () => MOCK_COMMUNITY_ADS,
+    );
+    setCommunityAds(rows);
   };
 
   // Auto-rotate ads using per-ad duration

@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
-import { supabase, type Event } from "@/lib/supabase"
+import type { Event } from "@/lib/types"
+import { loadWithFallback } from "@/lib/load-with-fallback"
+import { api } from "@/convex/_generated/api"
+import { getMockPastEvents } from "@/lib/mock-data"
 
 export default function GallerySection() {
   const [events, setEvents] = useState<Event[]>([])
@@ -85,37 +88,16 @@ export default function GallerySection() {
   }, [events]);
 
   const fetchEvents = async () => {
-    if (!supabase) {
-      console.warn("Supabase not initialized")
-      setEvents([])
-      return
-    }
-    try {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("is_upcoming", false) // Only completed events
-        .order("event_date", { ascending: false })
-
-      if (error) {
-        console.error("Error fetching gallery events:", error)
-        setEvents([])
-      } else {
-        if (data && data.length > 0) {
-            // Duplicate for infinite scroll (Triplicate)
-            setEvents([...data, ...data, ...data])
-            // Kickstart scroll
-            requestAnimationFrame(() => setTopRowPaused(false))
-        } else {
-            setEvents([])
-        }
-      }
-    } catch (err) {
-      console.error("Unexpected error fetching events:", err)
-      setEvents([])
-    } finally {
-      setIsLoading(false)
-    }
+    const rows = await loadWithFallback<Event>(
+      "Gallery",
+      (client) => client.query(api.events.listPast, { order: "desc" }) as Promise<Event[]>,
+      getMockPastEvents,
+    )
+    // Duplicate for infinite scroll (Triplicate)
+    setEvents([...rows, ...rows, ...rows])
+    setIsLoading(false)
+    // Kickstart scroll
+    requestAnimationFrame(() => setTopRowPaused(false))
   }
 
   // Auto-Scroll Loop

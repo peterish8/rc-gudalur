@@ -56,9 +56,9 @@ This is the **official website** for the **Rotary Club of Gudalur Garden City**,
 |---------|-------------|
 | 🏠 **Hero Section** | Dynamic hero with auto-scrolling events & community stats |
 | 👥 **Board Members** | Auto-scrolling carousel showcasing club leadership |
-| 📅 **Events** | Interactive event cards with Supabase backend |
+| 📅 **Events** | Interactive event cards backed by Convex |
 | 🖼️ **Gallery** | Beautiful image gallery with lightbox popup |
-| 📞 **Contact Form** | Direct contact with Supabase integration |
+| 📞 **Contact Form** | Direct contact saved to Convex |
 | 📖 **Daily Thirukural** | Tamil wisdom - fetched daily from API |
 | 📱 **Fully Responsive** | Optimized for mobile, tablet & desktop |
 
@@ -74,7 +74,7 @@ This is the **official website** for the **Rotary Club of Gudalur Garden City**,
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Convex](https://img.shields.io/badge/Convex-EE342F?style=flat-square&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
 </div>
@@ -94,8 +94,8 @@ cd rc-gudalur
 pnpm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Add your Supabase credentials
+npx convex dev   # logs in, links the Convex project, writes .env.local
+# (keep `npx convex dev` running in a second terminal while developing)
 
 # Run development server
 pnpm dev
@@ -122,7 +122,11 @@ rc-gudalur/
 │   ├── contact-section.tsx # Contact form + Thirukural
 │   └── footer.tsx          # Footer
 ├── lib/
-│   └── supabase.ts         # Supabase client
+│   ├── convex.ts           # Convex client
+│   ├── load-with-fallback.ts # Convex read + sample-content fallback
+│   └── mock-data.ts        # Sample content shown when Convex is empty/unreachable
+├── convex/                 # Convex schema + functions (shared with the admin panel)
+├── scripts/seed-convex.mts # Seeds an empty deployment with the sample content
 └── public/                 # Static assets
 ```
 
@@ -133,8 +137,7 @@ rc-gudalur/
 Create a `.env.local` file with:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_CONVEX_URL=https://<your-deployment>.convex.cloud
 ```
 
 ---

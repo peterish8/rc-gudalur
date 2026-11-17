@@ -1,26 +1,7 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    "Missing Supabase environment variables. Contact form will be disabled or fallback to mock mode. " +
-      "Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file."
-  );
-}
-
-// Create client only if keys exist, otherwise return null (or handle safely)
-export const supabase: SupabaseClient | null = (supabaseUrl && supabaseAnonKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: false,
-      },
-    })
-  : null;
+// Row shapes returned by the Convex functions in convex/ (see convex/lib.ts toRow).
 
 export type Event = {
-  id: string; // UUID
+  id: string;
   title: string;
   description: string | null;
   event_date: string; // Date in format YYYY-MM-DD
@@ -31,7 +12,7 @@ export type Event = {
 };
 
 export type BoardMember = {
-  id: string; // UUID
+  id: string;
   name: string;
   designation: string;
   section?: string; // "fixed", "layer1", "layer2", "layer3" - controls which section member appears in

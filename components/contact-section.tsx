@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState } from "react"
-import { supabase } from "@/lib/supabase"
+import { convex } from "@/lib/convex"
+import { api } from "@/convex/_generated/api"
 import { useThirukural } from "@/hooks/useThirukural"
 
 export default function ContactSection() {
@@ -23,19 +24,15 @@ export default function ContactSection() {
     setSubmitStatus("idle")
 
     try {
-      if (!supabase) {
-        throw new Error("Supabase client is not initialized due to missing environment variables.")
+      if (!convex) {
+        throw new Error("Contact form is unavailable: NEXT_PUBLIC_CONVEX_URL is not set.")
       }
 
-      const { error } = await supabase.from("contact_submissions").insert([{
+      await convex.mutation(api.contact.submit, {
         name: formData.name,
         phone: formData.phone,
         message: formData.message,
-      }])
-
-      if (error) {
-        throw error
-      }
+      })
 
       setSubmitStatus("success")
       setFormData({ name: "", phone: "", message: "" })

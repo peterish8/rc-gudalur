@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { supabase, type BoardMember } from "@/lib/supabase";
+import type { BoardMember } from "@/lib/types";
+import { loadWithFallback } from "@/lib/load-with-fallback";
+import { api } from "@/convex/_generated/api";
+import { MOCK_BOARD_MEMBERS } from "@/lib/mock-data";
 
 // BoardMemberCard component
 const BoardMemberCard: React.FC<{ member: BoardMember }> = ({ member }) => {
@@ -29,36 +32,19 @@ export default function BoardMembers() {
   const [boardMembers, setBoardMembers] = useState<BoardMember[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch board members from Supabase
+  // Fetch board members from Convex
   useEffect(() => {
     fetchBoardMembers();
   }, []);
 
   const fetchBoardMembers = async () => {
-    try {
-      console.log("Fetching board members from Supabase...");
-      const { data, error } = await supabase
-        .from("board_members")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching board members:", error);
-        setBoardMembers([]);
-      } else {
-        console.log(
-          "Board members fetched successfully:",
-          data?.length || 0,
-          "members"
-        );
-        setBoardMembers(data || []);
-      }
-    } catch (error) {
-      console.error("Network error fetching board members:", error);
-      setBoardMembers([]);
-    } finally {
-      setLoading(false);
-    }
+    const rows = await loadWithFallback<BoardMember>(
+      "Board members",
+      (client) => client.query(api.boardMembers.list, {}) as Promise<BoardMember[]>,
+      () => MOCK_BOARD_MEMBERS,
+    );
+    setBoardMembers(rows);
+    setLoading(false);
   };
 
   // Organize members by section field (if available) or fallback to old logic
